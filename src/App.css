@@ -1,38 +1,315 @@
-.App {
-  text-align: center;
+*{
+  margin: 0;
+  box-sizing:border-box;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
+/* header */
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.header{
+  position: sticky;
+  top:0;
   display: flex;
-  flex-direction: column;
+  height: 50px;
+  background-color: aqua;
+  padding: 10px;
+  align-items: center;
+  z-index: 1;
+}
+
+.menuToggle{
+  padding: 0px 10px;
+  cursor: pointer;
+}
+
+.menuToggle>span{
+  border-width: 0;
+  background-color: none;
+}
+
+.menuToggle>span:hover{
+  background-color: #71717146;
+}
+
+.appTitle{
+  flex-grow: 1;
+  cursor: pointer;
+  margin-left: 30px;
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.search{
+  flex-grow: 0.2;
+  cursor: pointer;
+}
+
+.toggleView{
+  cursor: pointer;
+}
+
+.profile{
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  cursor: pointer;
+  margin: 0 20px;
+  padding:0;
 }
 
-.App-link {
-  color: #61dafb;
+.circler{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid black;
+  border-radius: 50%;
+  height: 45px;
+  width:45px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* nav */
+
+.nav{
+  position: sticky;
+  top:50px;
+  display: flex;
+  flex-direction: column;
+  background-color: brown;
+  height: calc(100vh - 50px);
+  overflow: hidden;
 }
+
+.navItem{
+  display: flex;
+  margin: 15px 2px;
+  cursor: pointer;
+}
+
+.navIcon{
+  padding: 0 20px;
+  width:90px;
+}
+
+.navTag{
+  flex-grow: 1;
+  font-size: 1.3rem;
+  font-weight: 500;
+  margin-left: 5px;
+  white-space: nowrap;
+}
+
+/* content */
+
+.content{
+  display: flex;
+  width:100vw;
+}
+
+/* navigation toggle */
+
+.navToggleClass0{
+  width:280px;
+  transition:width 0.1s ;
+}
+
+.navToggleClass1:hover {
+  width:280px;
+  transition:width 0.1s ;
+  transition-delay:0.5s;
+}
+
+.navToggleClass1{
+  width:65px;
+  transition:width 0.1s ;
+}
+
+.hideTag{
+  display: none;
+}
+.navToggleClass1:hover .hideTag{
+  display: block;
+}
+
+.nonNavToggleClass0{
+  width:calc(100vw - 280px);
+  transition:width 0.1s ;
+}
+
+.navToggleClass1:hover  .navToggleClass1{
+  width:calc(100vw - 280px);
+  transition:width 0.1s ;
+  transition-delay:0.5s;
+}
+
+.nonNavToggleClass1{
+  width:calc(100vw - 65px);
+  transition:width 0.1s ;
+}
+
+
+/* nonNav */
+
+.nonNav{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  overflow-y: scroll;
+}
+
+/*width*/
+::-webkit-scrollbar {
+  display: none;
+}
+
+
+/* takeNote */
+
+.takeNote{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0px;
+  background-color: black;
+  width: min(80% , 600px);
+  height:50px;
+  overflow:hidden;
+  box-shadow: 1px 2px 5px 1px rgba(0, 0, 0, 0.434);
+  border-radius:5px;
+
+}
+
+#takeNote{
+  border-style: none;
+  width: 90%;
+  height:50px;
+  padding:0 20px;
+  font-size: 1.2rem;
+}
+
+#takeNote:focus{
+  outline: none;
+}
+
+.newList{
+  display: flex;
+  justify-content: center;
+  background-color: white;
+  align-items: center;
+  height:50px;
+  width: 10%;
+  padding-right: 10px;
+  color:#a4a4a4;
+}
+
+/* notelist */
+
+.noteList{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.listView{
+  flex-direction: column;
+}
+
+.note{
+  display: flex;
+  flex-direction: column;
+  background-color: blueviolet;
+  background-image: none;
+  margin: 5px;
+  width:240px;
+  height: max-content;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.images{
+  /* display: flex;
+  justify-content: center; */
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+  width:100%;
+  height:100px;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.images::-webkit-scrollbar { 
+  display: none;
+}
+
+.images>img{
+  display: flex;
+  height:100px;
+}
+
+.noteContent{
+  display: flex;
+  flex-direction: column;
+  padding: 10px 20px;
+  row-gap: 10px;
+}
+
+.noteTitle{
+  font-size: 1.3rem;
+  font-weight: 500;
+}
+
+.noteLabels{
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.noteLabel{
+  background-color: rgba(0, 0, 0, 0.184);
+  margin-right:3px;
+  border-radius: 8px;
+  padding: 2px 5px;
+  font-size: 0.8rem;
+}
+
+.noteOptions{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* cursor: pointer; */
+}
+
+.notePin {
+  position:relative;
+  top:-75px;
+  left: 200px;
+  z-index: 0;
+  /* cursor: pointer; */
+  margin-top: -25px;
+}
+
+.hider{
+  visibility: hidden;
+  opacity:0;
+}
+
+.note:hover  .hider{
+  visibility: visible;
+  opacity:100%;
+  transition: opacity 0.5s;
+}
+
+.curs{
+  cursor: pointer;
+}
+
+/* .noteSelect{
+  position:relative;
+  top:-225px;
+  left:-30px;
+  z-index: 0;
+  cursor: pointer;
+} */

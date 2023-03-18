@@ -1,23 +1,29 @@
-import logo from './logo.svg';
+import { useState } from 'react';
 import './App.css';
+import Header from './components/Header';
+import Nav from './components/Nav/Nav';
+import Notelist from './components/Notes/Notelist';
+import Takenote from './components/Notes/Takenote';
 
 function App() {
+  var [navMode,setNavMode] = useState(0);
+  const navToggler = ()=>{
+    navMode===0?setNavMode(1):setNavMode(0);
+  }
+  var [view,setView] = useState("grid");
+  const getView = (retView)=>{
+    setView(retView);
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Header navToggler={navToggler} getView={getView}/>
+      <span className="content">
+        <Nav navMode={navMode}/>
+        <span className={`nonNav nonNavToggleClass${navMode} `}>
+          <Takenote/>
+          <Notelist view={view}/>
+        </span>
+      </span>
     </div>
   );
 }
