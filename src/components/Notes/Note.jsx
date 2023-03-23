@@ -27,11 +27,11 @@ function Note() {
             </span>
             <span className="noteOptions hider">
                 {/*icons*/}
-                <i className="fa-solid fa-palette curs"></i>
-                <i className="fa-regular fa-image curs"></i>
-                <i className="fa-solid fa-box-archive curs"></i>
-                <i className="fa-solid fa-trash curs"></i>
-                <i className="fa-solid fa-tags curs"></i>
+                <i className="fa-solid fa-palette curs add"></i>
+                <i className="fa-regular fa-image curs add"></i>
+                <i className="fa-solid fa-box-archive curs add"></i>
+                <i className="fa-solid fa-trash curs add"></i>
+                <i className="fa-solid fa-tags curs add"></i>
             </span>
             {/* <span className="nonPosIcons">
                 <span className="notePin">

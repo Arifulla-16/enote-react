@@ -11,10 +11,12 @@
   top:0;
   display: flex;
   height: 50px;
-  background-color: aqua;
+  background-color: white;
   padding: 10px;
   align-items: center;
   z-index: 1;
+  /* border-bottom: 1px solid black; */
+  box-shadow: 0 0 2px black;
 }
 
 .menuToggle{
@@ -22,17 +24,23 @@
   cursor: pointer;
 }
 
-.menuToggle>span{
+.icAni{
   border-width: 0;
   background-color: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  height: 45px;
+  width:45px;
 }
 
-.menuToggle>span:hover{
+.icAni:hover{
   background-color: #71717146;
 }
 
 .appTitle{
-  flex-grow: 1;
+  /* flex-grow: 0.5; */
   cursor: pointer;
   margin-left: 30px;
   font-size: 1.6rem;
@@ -40,8 +48,53 @@
 }
 
 .search{
-  flex-grow: 0.2;
+  flex-grow: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-right: 20px;
   cursor: pointer;
+  white-space: nowrap;
+}
+
+.arrow{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top:25px;
+  right:calc(min(calc(95vw - 140px),400px) + 115px);
+  z-index:2;
+  color:rgb(114, 114, 114);
+}
+
+.arrow:hover{
+  color: black;
+}
+
+.hideSearch{
+  display: none;
+}
+
+#searchBar{
+  position: absolute;
+  top:5px;
+  right:140px;
+  border-style: none;
+  height:40px;
+  width:min(calc(95vw - 140px),400px);
+  padding-left:50px;
+  padding-right: 20px;
+  font-size: 1.2rem;
+  border-radius: 10px;
+  margin-right: 10px;
+  box-shadow: 1px 2px 5px 1px rgba(0, 0, 0, 0.434);
+  z-index:1;
+}
+
+#searchBar:focus{
+  outline: none;
 }
 
 .toggleView{
@@ -53,7 +106,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  margin: 0 20px;
+  margin: 0 15px;
   padding:0;
 }
 
@@ -74,28 +127,45 @@
   top:50px;
   display: flex;
   flex-direction: column;
-  background-color: brown;
+  /* background-color: brown; */
   height: calc(100vh - 50px);
   overflow: hidden;
 }
 
 .navItem{
   display: flex;
-  margin: 15px 2px;
+  margin: 10px 0px;
   cursor: pointer;
 }
 
 .navIcon{
-  padding: 0 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 23px;
   width:90px;
 }
 
+.icAniflx{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .navTag{
-  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  /* flex-grow: 1; */
   font-size: 1.3rem;
   font-weight: 500;
-  margin-left: 5px;
+  margin-left: 15px;
   white-space: nowrap;
+}
+
+.navItHovClass:hover{
+  background-color: #a4a4a4;
+  transition: background-color 0.6s;
+  border-radius: 20px;
 }
 
 /* content */
@@ -114,12 +184,16 @@
 
 .navToggleClass1:hover {
   width:280px;
+  background-color: white;
+  box-shadow: 0 5px 5px black;
   transition:width 0.1s ;
-  transition-delay:0.5s;
+  transition-delay:0.2s;
 }
 
+
 .navToggleClass1{
-  width:65px;
+  position: fixed;
+  width:86px;
   transition:width 0.1s ;
 }
 
@@ -127,7 +201,7 @@
   display: none;
 }
 .navToggleClass1:hover .hideTag{
-  display: block;
+  display: flex;
 }
 
 .nonNavToggleClass0{
@@ -135,15 +209,9 @@
   transition:width 0.1s ;
 }
 
-.navToggleClass1:hover  .navToggleClass1{
-  width:calc(100vw - 280px);
-  transition:width 0.1s ;
-  transition-delay:0.5s;
-}
-
 .nonNavToggleClass1{
-  width:calc(100vw - 65px);
-  transition:width 0.1s ;
+  margin-left: 86px;
+  width:calc(100vw - 86px);
 }
 
 
@@ -165,21 +233,48 @@
 
 /* takeNote */
 
+.takeNoteContainer{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0px;
+  width: min(80% , 600px);
+  /* background-color: rgb(168, 16, 142); */
+  box-shadow: 1px 2px 5px 1px rgba(0, 0, 0, 0.434);
+  border-radius:5px;
+}
+
+.takeNoteTitle{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: min(100% , 600px);
+  height:50px;
+  overflow:hidden;
+  border-radius:5px 5px 0 0;
+}
+
 .takeNote{
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 20px 0px;
   background-color: black;
-  width: min(80% , 600px);
+  width: min(100% , 600px);
   height:50px;
   overflow:hidden;
-  box-shadow: 1px 2px 5px 1px rgba(0, 0, 0, 0.434);
-  border-radius:5px;
-
 }
 
-#takeNote{
+.boxShadow{
+  box-shadow: 1px 2px 5px 1px rgba(0, 0, 0, 0.434);
+  border-radius:5px;
+}
+
+#takeNoteTitle{
+  width: 100%;
+}
+
+.takeNoteInput{
   border-style: none;
   width: 90%;
   height:50px;
@@ -187,8 +282,51 @@
   font-size: 1.2rem;
 }
 
-#takeNote:focus{
+.takeNoteInput:focus{
   outline: none;
+}
+
+.takeNoteOptions{
+  display: flex;
+  height: 35px;
+  width: 100%;
+  background-color: white;
+  border-radius:0 0 5px 5px;
+  overflow: hidden;
+}
+
+.addItem{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+  width: min(100% , 600px);
+  height:50px;
+  overflow:hidden;
+}
+
+.addItem>span>i{
+  margin-left: 20px;
+}
+
+.addItemList{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+  width: min(100% , 600px);
+  overflow:hidden;
+}
+
+.icons{
+  display: flex;
+  justify-content: flex-start;
+  column-gap: 30px;
+  overflow: scroll;
+  width: 90%;
+  padding-left: 20px;
+  align-items: center;
 }
 
 .newList{
@@ -200,6 +338,41 @@
   width: 10%;
   padding-right: 10px;
   color:#a4a4a4;
+}
+
+#itemStatus{
+  margin-left: 20px;
+}
+
+#itemValue{
+  width: 80%;
+}
+
+.del{
+  margin-right: 20px;
+}
+
+.blacken:hover{
+  color: black;
+}
+
+.takeNoteOptions>div{
+  height: 30px;
+}
+
+.add{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+}
+
+.add:hover{
+  background-color: #a4a4a4;
+  color: black;
 }
 
 /* notelist */
@@ -218,7 +391,7 @@
 .note{
   display: flex;
   flex-direction: column;
-  background-color: blueviolet;
+  border: 1px solid black;
   background-image: none;
   margin: 5px;
   width:240px;
@@ -300,6 +473,10 @@
   visibility: visible;
   opacity:100%;
   transition: opacity 0.5s;
+}
+
+.note:hover{
+  box-shadow: 1px 2px 7px 1px rgba(0, 0, 0, 0.841);
 }
 
 .curs{

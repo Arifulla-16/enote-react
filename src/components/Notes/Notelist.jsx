@@ -7,11 +7,6 @@ function Notelist(props) {
         <Note/>
         <Note/>
         <Note/>
-        <Note/>
-        <Note/>
-        <Note/>
-        <Note/>
-        <Note/>
     </div>
   )
 }

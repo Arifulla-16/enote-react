@@ -17,7 +17,7 @@ function App() {
   return (
     <div>
       <Header navToggler={navToggler} getView={getView}/>
-      <span className="content">
+      <span className="content" id="content">
         <Nav navMode={navMode}/>
         <span className={`nonNav nonNavToggleClass${navMode} `}>
           <Takenote/>
