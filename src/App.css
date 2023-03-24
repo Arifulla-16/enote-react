@@ -423,6 +423,10 @@
   height:100px;
 }
 
+.images{
+  display: flex;
+}
+
 .noteContent{
   display: flex;
   flex-direction: column;
@@ -435,12 +439,30 @@
   font-weight: 500;
 }
 
+.noteCheckList{
+  display:flex;
+  column-gap: 10px;
+}
+
+input:checked + li {
+  text-decoration:line-through;
+}
+
+ul{
+  list-style-type:none;
+  padding: 0 2px;
+}
+
 .noteLabels{
   display: flex;
   flex-wrap: wrap;
 }
 
 .noteLabel{
+  cursor: pointer;
+  display:flex;
+  align-items: center;
+  justify-content: center;
   background-color: rgba(0, 0, 0, 0.184);
   margin-right:3px;
   border-radius: 8px;
@@ -448,11 +470,58 @@
   font-size: 0.8rem;
 }
 
+.noteLabel>div{
+  position: relative;
+  display:none;
+  justify-content: center;
+  align-items: center;
+  left:2px;
+  top:0px;
+  margin-left: -18px;
+  width: 18px;
+  height: 19px;
+}
+
+.noteLabel>div>i{
+  display:flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.noteLabel:hover   div{
+  display: flex;
+  border-radius: 8px;
+}
+/* 
+.noteLabel>span::before{
+  display: flex;
+  position: relative;
+}
+
+.noteLabel>span:hover{
+  font-size: 0;
+  display: flex;
+  content: "";
+}
+
+.noteLabel>span:hover:before{
+  font-size: 0.8rem;
+  content: attr(data-hover);
+} */
+
+.noteLabel>div:hover{
+  background-color: #a4a4a4b3;
+}
+
 .noteOptions{
   display: flex;
   justify-content: space-between;
   align-items: center;
   /* cursor: pointer; */
+}
+
+#imgUpload{
+  display:none;
 }
 
 .notePin {
