@@ -1,31 +1,9 @@
+import { useState } from 'react';
 import Note from './Note'
 
 function Notelist(props) {
-  // var [noteList,setNoteList] = useState([
-  //   {
-  //     "id":1,
-  //     "title":"Abc",
-  //     "text":"Done in the of king",
-  //     "tags":["study","done"],
-  //     "images":["3","1"]
-  //   },
-  //   {
-  //     "id":2,
-  //     "title":"Def",
-  //     "text":"Of the record",
-  //     "tags":["science","home"],
-  //     "images":["4","2"]
-  //   },
-  //   {
-  //     "id":3,
-  //     "title":"Ghi",
-  //     "text":"Not mine",
-  //     "tags":["misc","home"],
-  //     "images":["1","2"]
-  //   }
-  // ]);
-
-  var {view,noteList,setNoteList} = props;
+  var {view,noteList,setNoteList,setTargetNote} = props;
+  var [title,setTitle] = useState("on");
 
   const tagRemover = (id,delTag)=>{
     var changedNote = noteList.filter((note)=>note.id==id);
@@ -40,11 +18,7 @@ function Notelist(props) {
         return changedNote[0];
       }
     });
-
-    // console.log(updatedList);
-
     setNoteList(updatedList);
-
   }
 
   const noteRemover = (id)=>setNoteList(noteList.filter((note)=>note.id!=id));
@@ -63,14 +37,61 @@ function Notelist(props) {
     setNoteList(updatedList);
   }
 
+  const updatePin = (noteId,bool) => {
+    setNoteList(noteList.map((note)=>{
+      if(note.id==noteId){
+        note.pinned=bool;
+        return note;
+      }
+      else{
+        return note;
+      }
+    }));
+  }
+
+  const titleSet = () =>{
+    if(document.getElementsByClassName("pinnedList")[0].children.length!=0){
+      setTitle("on")
+    }
+    else{
+      setTitle("off")
+    }
+  }
 
   return (
-    <div className={`noteList ${view==="grid"?"":"listView"}`}>
-        {
-          noteList.map((note)=>{
-            return <Note title={note.title} text={note.text} list={note.list} checkList={note.checkList} id={note.id} tags={note.tags} images={note.images} tagRemover={tagRemover} noteRemover={noteRemover} checkUpdate={checkUpdate}/>
-          })
-        }
+    <div className="pinnedAndUnpinned" style={{alignItems:`${view==="grid"?"flex-start":"center"}`,marginLeft:`${view==="grid"?"150px":"0px"}`}} onLoad={titleSet}>
+      <div>
+        <span className="listSectionTitle">
+          {
+            title=="on"?"Other":""
+          }
+        </span>
+        <div className={`noteList ${view==="grid"?"":"listView"}`}>
+          {
+            noteList.map((note)=>{
+              if(!note.pinned){
+                return <Note note={note} tagRemover={tagRemover} noteRemover={noteRemover} checkUpdate={checkUpdate} setTargetNote={setTargetNote} updatePin={updatePin}/>
+              }
+            })
+          }
+        </div>
+      </div>
+      <div>
+        <span className="listSectionTitle">
+          {
+            title=="on"?"Pinned":""
+          }
+        </span>
+        <div className={`noteList pinnedList ${view==="grid"?"":"listView"}`}>
+          {
+            noteList.map((note)=>{
+              if(note.pinned){
+                return <Note note={note} tagRemover={tagRemover} noteRemover={noteRemover} checkUpdate={checkUpdate} setTargetNote={setTargetNote} updatePin={updatePin}/>
+              }
+            })
+          }
+        </div>
+      </div>
     </div>
   )
 }

@@ -259,7 +259,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: black;
+  /* background-color: black; */
   width: min(100% , 600px);
   height:50px;
   overflow:hidden;
@@ -271,7 +271,7 @@
 }
 
 #takeNoteTitle{
-  width: 100%;
+  width: 90%;
 }
 
 .takeNoteInput{
@@ -377,21 +377,37 @@
 
 /* notelist */
 
+.pinnedAndUnpinned{
+  display: flex;
+  flex-direction: column-reverse;
+  width:100%;
+  margin-left:150px;
+}
+
+.listSectionTitle{
+  font-size: 1.1rem;
+  font-weight: 900px;
+  margin-left: 20px;
+  color:#86818b ;
+}
+
 .noteList{
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: flex-start;
   flex-wrap: wrap;
 }
 
 .listView{
   flex-direction: column;
+  align-items: center;
 }
 
 .note{
   display: flex;
   flex-direction: column;
-  border: 1px solid black;
+  border: 1px solid rgba(193, 193, 193, 0.574);
   background-image: none;
   margin: 5px;
   width:240px;
@@ -428,6 +444,9 @@
 }
 
 .noteContent{
+  /* background-image: url(https://www.gstatic.com/keep/backgrounds/recipe_light_thumb_0615.svg); */
+  background-repeat: no-repeat;
+  background-size:cover;
   display: flex;
   flex-direction: column;
   padding: 10px 20px;
@@ -520,6 +539,37 @@ ul{
   /* cursor: pointer; */
 }
 
+.colorImg{
+  display: none;
+  flex-direction: column;
+  border:1px solid black;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 0 5px black;
+}
+
+.palette{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  column-gap: 10px;
+  z-index: 1;
+  height: 50px;
+  width: 500px;
+  padding: 0 25px;
+}
+
+.colorPalette{
+  border-bottom: 1px solid black;
+}
+
+.roundOff{
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  border:1px solid black;
+}
+
 #imgUpload{
   display:none;
 }
@@ -529,7 +579,7 @@ ul{
   top:-75px;
   left: 200px;
   z-index: 0;
-  /* cursor: pointer; */
+  width:15px;
   margin-top: -25px;
 }
 
@@ -552,10 +602,44 @@ ul{
   cursor: pointer;
 }
 
-/* .noteSelect{
-  position:relative;
-  top:-225px;
-  left:-30px;
-  z-index: 0;
-  cursor: pointer;
-} */
+
+.editLabels{
+  display:none;
+  background-color: white;
+  flex-direction: column;
+  border:1px solid black;
+  padding:10px;
+  border-radius: 5px;
+  row-gap: 7px;
+}
+
+.editLabelsTitle{
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.editLabelsInput{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+}
+
+#labelSearch{
+  border-style: none;
+}
+
+#labelSearch:focus{
+  outline: none;
+}
+
+.editLabelsList{
+  display:flex;
+  flex-direction: column;
+}
+
+.editLabelsItem{
+  display:flex;
+  align-items: center;
+  column-gap: 5px;
+}

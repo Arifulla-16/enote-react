@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 
 function Note(props) {
-
-    var {id,title,text,list,checkList,tags,images,tagRemover,noteRemover,checkUpdate} = props;
+    var {note,tagRemover,noteRemover,checkUpdate,setTargetNote,updatePin} = props;
+    var {id,title,text,list,checkList,tags,images,bgImage,bgColor,pinned} = note;
 
 
     const delTag = (el) => {
@@ -13,7 +13,6 @@ function Note(props) {
 
     const delNote = (el) => {
         var tarId = el.currentTarget.getAttribute("uid");
-        console.log(tarId);
         noteRemover(tarId);
     }
 
@@ -37,21 +36,73 @@ function Note(props) {
         e.target.value=null;
     }
 
+    const displayPalette = (e) =>{
+        setTargetNote(e.target.attributes["uid"].value);
+        var palette = document.getElementById("palette");
+        if(document.getElementById("editLabels").style.display !== 'none'){
+            document.getElementById("editLabels").style.display = 'none';
+          }
+        palette.style.position = "absolute";
+        palette.style.top = `${e.pageY}px` ;
+        palette.style.left = `${e.pageX}px` ;
+        palette.style.display = 'flex';
+        e.stopPropagation();
+    }
+
+    const showList = (e) => {
+        setTargetNote(e.target.attributes["uid"].value);
+        var palette = document.getElementById("editLabels");
+        if(document.getElementById("palette").style.display !== 'none'){
+            document.getElementById("palette").style.display = 'none';
+          }
+        // var taags = Array.from(document.getElementsByClassName("noteLabels"));
+        // var taggs;
+        // taags.forEach((el)=>{
+        //     if(el.attributes["uid"].value==e.target.attributes["uid"].value){
+        //         console.log(el);
+        //     }
+        // });
+        // var reqArray = [];
+        //     Array.from(taggs.children).forEach((c)=>{
+        //         reqArray = [c.children[0].innerText,...reqArray];
+        //     });
+        var checks = palette.querySelectorAll(".editLabelsList>span");
+        checks.forEach((child)=>{
+            var ar = Array.from(child.children);
+            ar.forEach((c,idx)=>{
+                if(c.checked!=undefined && tags.includes(ar[idx+1].innerText)){
+                    c.checked=true;
+                }
+                else if(c.checked!=undefined){
+                    c.checked=false;
+                }
+            });
+        });
+        palette.style.position = "absolute";
+        palette.style.top = `${e.pageY}px` ;
+        palette.style.left = `${e.pageX}px` ;
+        palette.style.display = 'flex';
+        e.stopPropagation();
+    }
+
+    const togglePin = (e) => {
+        updatePin(e.target.attributes["uid"].value,!pinned);
+        e.stopPropagation();
+    }
+
   return (
 
     <div className='note' uid={id}>
         <span className="images">
-        {/* <img src={require("../../images/1.jpg")} alt="image1" />
-        <img src={require("../../images/2.jpg")} alt="image2" /> */}
         {
             images.map((img)=>{
                return <img src={require(`../../images/${img}.jpg`)} alt={`image${img}`} />
             })
         }
         </span>
-        <span className="noteContent">
+        <span className="noteContent" style={{backgroundImage:bgImage,backgroundColor:bgColor}}>
             <span className="notePin hider">
-                <i className="fa-solid fa-thumbtack curs"></i>
+                <i className="fa-solid fa-thumbtack curs" uid={id} onClick={togglePin}></i>
             </span>
             <span className="noteTitle">
                 {title}
@@ -69,7 +120,7 @@ function Note(props) {
                     </ul>
                     }
             </span>
-            <span className="noteLabels" id="noteLabels">
+            <span className="noteLabels" id="noteLabels" uid={id}>
                 {
                     tags.map((tag)=>{
                         return (<span className="noteLabel">
@@ -82,16 +133,16 @@ function Note(props) {
                     
                 }
             </span>
-            <span className="noteOptions hider">
+            <span className="noteOptions hider ">
                 {/*icons*/}
-                <i className="fa-solid fa-palette curs add"></i>
+                <i className="fa-solid fa-palette curs add" onClick={displayPalette} uid={id} ></i>
                 <label className="custom-file-upload">
                     <input type="file" id="imgUpload" uid={id} onChange={showImg}/>
                     <i className="fa-regular fa-image curs add"></i>
                 </label>
                 <i className="fa-solid fa-box-archive curs add"></i>
                 <i className="fa-solid fa-trash curs add" onClick={delNote} uid={id}></i>
-                <i className="fa-solid fa-tags curs add"></i>
+                <i className="fa-solid fa-tags curs add" onClick={showList} uid={id}></i>
             </span>
         </span>
     </div>
