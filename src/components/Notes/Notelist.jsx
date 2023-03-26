@@ -70,7 +70,7 @@ function Notelist(props) {
           {
             noteList.map((note)=>{
               if(!note.pinned){
-                return <Note note={note} tagRemover={tagRemover} noteRemover={noteRemover} checkUpdate={checkUpdate} setTargetNote={setTargetNote} updatePin={updatePin}/>
+                return <Note key={note.id} note={note} tagRemover={tagRemover} noteRemover={noteRemover} checkUpdate={checkUpdate} setTargetNote={setTargetNote} updatePin={updatePin}/>
               }
             })
           }
@@ -86,7 +86,7 @@ function Notelist(props) {
           {
             noteList.map((note)=>{
               if(note.pinned){
-                return <Note note={note} tagRemover={tagRemover} noteRemover={noteRemover} checkUpdate={checkUpdate} setTargetNote={setTargetNote} updatePin={updatePin}/>
+                return <Note key={note.id}  note={note} tagRemover={tagRemover} noteRemover={noteRemover} checkUpdate={checkUpdate} setTargetNote={setTargetNote} updatePin={updatePin}/>
               }
             })
           }

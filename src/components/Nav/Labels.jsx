@@ -5,7 +5,7 @@ function Labels(props) {
   return (
     <div className='lables'>
         {props.labelList.map((label)=>{
-            return <NavItem icon={"fa-solid fa-hashtag"} tag={label} styl={props.styl}/>
+            return <NavItem key={label} icon={"fa-solid fa-hashtag"} tag={label} styl={props.styl}/>
         })}
     </div>
   )

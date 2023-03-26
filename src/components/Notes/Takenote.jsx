@@ -126,13 +126,13 @@ function Takenote(props) {
   return (
     <div className='takeNoteContainer'>
       <div className={` ${inputFocus==="on" || listFocus==="on"?"takeNoteTitle":"hideTag"}`}>
-        <input type="text" name="takeNoteTitle" id="takeNoteTitle" className='takeNoteInput' autocomplete="off" placeholder='Title' onChange={titleValSet} value={titleVal} />
+        <input type="text" name="takeNoteTitle" id="takeNoteTitle" className='takeNoteInput' autoComplete="off" placeholder='Title' onChange={titleValSet} value={titleVal} />
         <span className="newList">
           <i className="fa-solid fa-thumbtack curs blacken"></i>
         </span>
       </div>
       <div className={`${inputFocus==="off"?"boxShadow":""} ${listFocus==="on"?"hideTag":"takeNote"}`}>
-          <input type="text" name="takeNote" id="takeNote" className='takeNoteInput' autocomplete="off" placeholder='Take a Note...' onFocus={toggleFocus} onChange={noteValSet} value={noteVal}/>
+          <input type="text" name="takeNote" id="takeNote" className='takeNoteInput' autoComplete="off" placeholder='Take a Note...' onFocus={toggleFocus} onChange={noteValSet} value={noteVal}/>
           <span className="newList">
             <i className="fa-regular fa-square-check fa-xl blacken" onClick={listToggle}></i>
           </span>
@@ -143,7 +143,7 @@ function Takenote(props) {
             <span className="newList">
               <i className="fa-regular fa-add fa-xl"></i>
             </span>
-            <input type="text" name="addItem" id="addItem" className='takeNoteInput' autocomplete="off" value="" placeholder='List item'  onChange={itemAdder}/>
+            <input type="text" name="addItem" id="addItem" className='takeNoteInput' autoComplete="off" value="" placeholder='List item'  onChange={itemAdder}/>
           </span>
       </div>
 

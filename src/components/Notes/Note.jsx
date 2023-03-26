@@ -55,17 +55,6 @@ function Note(props) {
         if(document.getElementById("palette").style.display !== 'none'){
             document.getElementById("palette").style.display = 'none';
           }
-        // var taags = Array.from(document.getElementsByClassName("noteLabels"));
-        // var taggs;
-        // taags.forEach((el)=>{
-        //     if(el.attributes["uid"].value==e.target.attributes["uid"].value){
-        //         console.log(el);
-        //     }
-        // });
-        // var reqArray = [];
-        //     Array.from(taggs.children).forEach((c)=>{
-        //         reqArray = [c.children[0].innerText,...reqArray];
-        //     });
         var checks = palette.querySelectorAll(".editLabelsList>span");
         checks.forEach((child)=>{
             var ar = Array.from(child.children);
@@ -96,7 +85,7 @@ function Note(props) {
         <span className="images">
         {
             images.map((img)=>{
-               return <img src={require(`../../images/${img}.jpg`)} alt={`image${img}`} />
+               return <img key={img} src={require(`../../images/${img}.jpg`)} alt={`image${img}`} />
             })
         }
         </span>
@@ -111,7 +100,7 @@ function Note(props) {
                 {text!="" && text}
                 {text=="" && <ul>{
                     list!=[] && list.map((item,idx)=>{
-                        return (<div className="noteCheckList">
+                        return (<div key={item} className="noteCheckList">
                                     <input type="checkbox" name="checker" idx={idx} uid={id} checked={checkList[idx]} onChange={handleCheck} className="listChecker"/>
                                     <li>{item}</li>
 
@@ -123,7 +112,7 @@ function Note(props) {
             <span className="noteLabels" id="noteLabels" uid={id}>
                 {
                     tags.map((tag)=>{
-                        return (<span className="noteLabel">
+                        return (<span key={tag} className="noteLabel">
                                     <span>{tag}</span>
                                     <div id="labelDel" onClick={delTag} tg={tag} uid={id}>
                                         <i className="fa-solid fa-xmark fa-xl curs"></i>

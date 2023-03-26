@@ -225,7 +225,7 @@
   overflow-y: scroll;
 }
 
-/*width*/
+/* width*/
 ::-webkit-scrollbar {
   display: none;
 }
@@ -380,7 +380,7 @@
 .pinnedAndUnpinned{
   display: flex;
   flex-direction: column-reverse;
-  width:100%;
+  width:85%;
   margin-left:150px;
 }
 
@@ -396,7 +396,6 @@
   flex-wrap: wrap;
   align-items: flex-start;
   justify-content: flex-start;
-  flex-wrap: wrap;
 }
 
 .listView{

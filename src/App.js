@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState,useEffect,useCallback } from 'react';
 import './App.css';
 import Header from './components/Header';
 import Nav from './components/Nav/Nav';
@@ -44,13 +44,17 @@ function App() {
       "pinned":false
     }
   ]);
-  var [allTagList,setAllTagList] = useState(["study","done","science","home","misc","new","note"]);
+  var tId = useRef("");
+  var temp = useRef("") ;
+  var arr = useRef([]);
+  var [allTagList,setAllTagList] = useState(["study","done","science","home","misc","new","note","one"]);
   var [idx,setIdx] = useState(3);
   var [navMode,setNavMode] = useState(0);
   var [targetNote,setTargetNote] = useState("");
   var [view,setView] = useState("grid");
   var [filteredList,setFilteredList] = useState([...allTagList]);
-  // var [searchVal,setSearchVal] = useState("");
+  var [searchVal,setSearchVal] = useState("");
+  var [reqArr,setReqArr] =useState([]);
 
   const navToggler = ()=>{
     navMode===0?setNavMode(1):setNavMode(0);
@@ -119,21 +123,65 @@ function App() {
     e.stopPropagation();
   }
 
-  // const filterTags = (e) => {
-  //   var sVal = e.currentTarget.value;
-  //   setSearchVal(sVal);
-  //   if(searchVal.length<4){
-  //     var tagList = allTagList.filter((tag)=>{
-  //       // console.log(tag,searchVal,tag.includes(searchVal));
-  //       var k = document.querySelector(".fa-tags[uid='".concat(targetNote).concat("']"));
-  //       return (tag.includes(sVal));
-  //     });
-  //     setFilteredList(tagList);
-  //   }
-  //   else{
-  //     setFilteredList([...allTagList]);
-  //   }
-  // }
+  const setSerVal = () =>{
+    setSearchVal(tId.current.value);
+    filterTags();
+  }
+
+  const arrayMaker = useCallback(()=>{
+    // localStorage.setItem(number, results)
+    var taags = Array.from(document.getElementsByClassName("noteLabels"));
+    var taggs;
+    taags.forEach((el)=>{
+        if(el.attributes["uid"].value==temp.current){
+            taggs=el;
+        }
+    });
+    var reqArray = [];
+    if(taggs!==undefined){
+      Array.from(taggs.children).forEach((c)=>{
+          reqArray = [c.children[0].innerText,...reqArray];
+      });
+    }
+    setReqArr(reqArray);
+  },[]);
+
+  const filterFunction = useCallback (() => {
+      var palette = document.getElementById("editLabels");
+      var checks = palette.querySelectorAll(".editLabelsList>span");
+      checks.forEach((child)=>{
+          var ar = Array.from(child.children);
+          ar.forEach((c,idx)=>{
+              if(c.checked!=undefined && arr.current.includes(ar[idx+1].innerText)){
+                  c.checked=true;
+              }
+              else if(c.checked!=undefined){
+                  c.checked=false;
+              }
+          });
+      });
+  },[]);
+
+  const filterTags = () => {
+    var tagList = allTagList.filter((tag)=>{
+      var k = document.querySelector(".fa-tags[uid='".concat(targetNote).concat("']"));
+      return (tag.includes(tId.current.value));
+    });
+    setFilteredList(tagList);
+  }
+
+  useEffect(()=>{
+    filterFunction();
+  },[filteredList,filterFunction]);
+
+  useEffect(()=>{
+    temp.current=targetNote;
+    arrayMaker();
+  },[targetNote,arrayMaker]);
+
+  useEffect(()=>{
+    arr.current=reqArr;
+  },[reqArr]);
 
   document.addEventListener('click', (e)=>{
     var palette = document.getElementById("palette");
@@ -152,10 +200,10 @@ function App() {
     <div>
       <Header navToggler={navToggler} getView={getView}/>
       <span className="content" id="content">
-        <Nav navMode={navMode} allTagList={allTagList}/>
+        <Nav navMode={navMode} allTagList={allTagList}  />
         <span className={`nonNav nonNavToggleClass${navMode} `}>
-          <Takenote addNewNote={addNewNote}/>
-          <Notelist view={view} noteList={noteList} setNoteList={updateNoteList} setTargetNote={setTargetNote}/>
+          <Takenote addNewNote={addNewNote} />
+          <Notelist view={view} noteList={noteList} setNoteList={updateNoteList} setTargetNote={setTargetNote} />
         </span>
           <span className="colorImg" id="palette">
               <span className="colorPalette palette">
@@ -189,14 +237,13 @@ function App() {
           <span className="editLabels" id="editLabels" onClick={(e)=>{e.stopPropagation()}}>
             <span className="editLabelsTitle"> Edit Labels </span>
             <span className="editLabelsInput">
-                                                                      {/* onChange={filterTags} value={searchVal} */}
-              <input type="text" name="labelSearch" id="labelSearch" placeholder="Enter label name" />
+              <input type="text" name="labelSearch" id="labelSearch" placeholder="Enter label name" autoComplete="off" ref={tId} onChange={setSerVal} value={searchVal} />
               <i className="fa-solid fa-magnifying-glass labelSearchIcon"></i>
             </span>
             <span className="editLabelsList">
               {
                 filteredList.map((tag)=>{
-                  return (<span className="editLabelsItem">
+                  return (<span key={tag} className="editLabelsItem">
                             <input type="checkbox" tag={tag} className="editLabelsItemCheck" onChange={handleCheck} name="labelInclusion" id="labelInclusion" />
                             <span className="editLabelsItemName" chk="false">{tag}</span>
                           </span>)
