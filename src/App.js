@@ -1,5 +1,6 @@
 import { useRef, useState,useEffect,useCallback } from 'react';
 import './App.css';
+import { BrowserRouter as Router, Routes , Route} from "react-router-dom";
 import Header from './components/Header';
 import Nav from './components/Nav/Nav';
 import Notelist from './components/Notes/Notelist';
@@ -14,10 +15,11 @@ function App() {
       "list":[],
       "checkList":[],
       "tags":["study","done"],
-      "images":["3","1"],
+      "images":[],
       "bgImage":"https://www.gstatic.com/keep/backgrounds/notes_light_thumb_0615.svg",
       "bgColor":"#ccff90",
-      "pinned":true
+      "pinned":true,
+      "archived":false
     },
     {
       "id":2,
@@ -26,10 +28,11 @@ function App() {
       "list":["hulu","crunch","me"],
       "checkList":[true,false,false],
       "tags":["science","home"],
-      "images":["4","2"],
+      "images":[],
       "bgImage":"none",
       "bgColor":"#fccfe9",
-      "pinned":false
+      "pinned":false,
+      "archived":true
     },
     {
       "id":3,
@@ -38,10 +41,11 @@ function App() {
       "list":[],
       "checkList":[],
       "tags":["misc","home"],
-      "images":["1","2"],
+      "images":[],
       "bgImage":"none",
       "bgColor":"#a6feeb",
-      "pinned":false
+      "pinned":false,
+      "archived":false
     }
   ]);
   var tId = useRef("");
@@ -50,11 +54,12 @@ function App() {
   var [allTagList,setAllTagList] = useState(["study","done","science","home","misc","new","note","one"]);
   var [idx,setIdx] = useState(3);
   var [navMode,setNavMode] = useState(0);
-  var [targetNote,setTargetNote] = useState("");
+  var [targetNote,setTargetNote] = useState("TNT");
   var [view,setView] = useState("grid");
   var [filteredList,setFilteredList] = useState([...allTagList]);
   var [searchVal,setSearchVal] = useState("");
   var [reqArr,setReqArr] =useState([]);
+  var [curTags,setCurTags] = useState([]);
 
   const navToggler = ()=>{
     navMode===0?setNavMode(1):setNavMode(0);
@@ -64,13 +69,24 @@ function App() {
     setView(retView);
   }
 
-  const updateNoteList = (list) =>{
-    setNoteList(list);
+  const updateNoteList = (list,typ) =>{
+    if(typ=="del"){
+      setNoteList(noteList.filter(note => note.id!=list[0].id));
+    }
+    else if(typ=="tdel" || typ=="ck" || typ=="img"){
+      setNoteList(noteList.map(note => {
+        if(note.id==list.id){
+          return list;
+        }
+        return note;
+      }))
+    }
   }
 
   const addNewNote = (note) =>{
     note.id=idx+1;
-    note.images = [`${(idx%4)+1}`,`${((idx+1)%4)+1}`];
+    // note.images = [`${(idx%4)+1}`,`${((idx+1)%4)+1}`];
+    // `${(idx%4)+1}`,`${((idx+1)%4)+1}`
     setIdx(idx+1);
     var upList = noteList.slice();
     upList.push(note);
@@ -79,57 +95,76 @@ function App() {
 
   const setColor = (e) => {
     var color = e.target.attributes["style"].value.slice(18).slice(0,-1);
-    var newList = noteList.map((note)=>{
-      if(note.id==targetNote){
-        note.bgImage = "none";
-        note.bgColor = color;
-        return note;
-      }
-      else{
-        return note;
-      }
-    });
-    setNoteList(newList);
+    if(targetNote=="TNT"){
+      var target = document.querySelector(".takeNoteOptions");
+      target.style.backgroundColor=color;
+    }
+    else{
+      var newList = noteList.map((note)=>{
+        if(note.id==targetNote){
+          note.bgImage = "none";
+          note.bgColor = color;
+          return note;
+        }
+        else{
+          return note;
+        }
+      });
+      setNoteList(newList);
+    }
   }
 
   const setImg = (e) => {
     var img = e.target.attributes["src"].value;
     img == "https://fonts.gstatic.com/s/i/googlematerialicons/image_not_supported/v12/gm_grey-24dp/1x/gm_image_not_supported_gm_grey_24dp.png"?img="none":img='url('.concat(img).concat(')');
-    var newList = noteList.map((note)=>{
-      if(note.id==targetNote){
-        note.bgImage = img;
-        return note;
-      }
-      else{
-        return note;
-      }
-    });
-    setNoteList(newList);
+    if(targetNote=="TNT"){
+      var target = document.querySelector(".takeNoteContainer");
+      target.style.backgroundImage=img;
+    }
+    else{
+      var newList = noteList.map((note)=>{
+        if(note.id==targetNote){
+          note.bgImage = img;
+          return note;
+        }
+        else{
+          return note;
+        }
+      });
+      setNoteList(newList);
+    }
   }
 
   const handleCheck = (e) => {
     var tag = e.target.attributes["tag"].value;
-    var newList;
-    newList = noteList.map((note)=>{
-      if(note.id==targetNote){
-        {e.target.checked!==true?note.tags.splice(note.tags.indexOf(tag),1):note.tags.push(tag)};
-        return note;
-      }
-      else{
-        return note;
-      }
-    });
-    setNoteList(newList);
+    if(targetNote=="TNT"){
+      var newTgs = [...curTags];
+      e.target.checked!==true?newTgs.splice(newTgs.indexOf(tag),1):newTgs.push(tag);
+      setCurTags(newTgs);
+    }
+    else{
+      var newList;
+      newList = noteList.map((note)=>{
+        if(note.id==targetNote){
+          {e.target.checked!==true?note.tags.splice(note.tags.indexOf(tag),1):note.tags.push(tag)};
+          return note;
+        }
+        else{
+          return note;
+        }
+      });
+      setNoteList(newList);
+    }
     e.stopPropagation();
   }
 
   const setSerVal = () =>{
     setSearchVal(tId.current.value);
+    arrayMaker();
     filterTags();
   }
 
   const arrayMaker = useCallback(()=>{
-    // localStorage.setItem(number, results)
     var taags = Array.from(document.getElementsByClassName("noteLabels"));
     var taggs;
     taags.forEach((el)=>{
@@ -164,10 +199,20 @@ function App() {
 
   const filterTags = () => {
     var tagList = allTagList.filter((tag)=>{
-      var k = document.querySelector(".fa-tags[uid='".concat(targetNote).concat("']"));
       return (tag.includes(tId.current.value));
     });
     setFilteredList(tagList);
+  }
+
+  const tagRemover = (tg)=>{
+    if(typeof(tg)=="boolean"){
+      setCurTags([]);
+    }
+    else{
+      var nTags = [...curTags];
+      nTags.splice(nTags.indexOf(tg),1);
+      setCurTags(nTags);
+    }
   }
 
   useEffect(()=>{
@@ -183,6 +228,15 @@ function App() {
     arr.current=reqArr;
   },[reqArr]);
 
+  useEffect(()=>{
+    if(targetNote=="TNT")
+      arr.current=curTags;
+  },[curTags]);
+
+  useEffect(()=>{
+    setCurTags([...curTags]);
+  },[]);
+
   document.addEventListener('click', (e)=>{
     var palette = document.getElementById("palette");
     var editLabels = document.getElementById("editLabels");
@@ -195,63 +249,87 @@ function App() {
     e.stopPropagation();
   });
 
+  const mergeLists = (lid,bl) =>{
+    var list = noteList.map((note)=>{
+      if(note.id==lid){
+        note.archived=bl;
+      }
+      return note;
+    })
+    setNoteList(list);
+  }
 
   return (
     <div>
+    <Router>
+        <span className="colorImg" id="palette">
+          <span className="colorPalette palette">
+            <span className="roundOff" onClick={setColor} id="none" style={{backgroundColor : "#ffffff"}}></span>
+            <span className="roundOff" onClick={setColor} id="red" style={{backgroundColor : "#f38a82"}}></span>
+            <span className="roundOff" onClick={setColor} id="orange" style={{backgroundColor : "#fbbc04"}}></span>
+            <span className="roundOff" onClick={setColor} id="yellow" style={{backgroundColor : "#fef575"}}></span>
+            <span className="roundOff" onClick={setColor} id="green" style={{backgroundColor : "#ccff90"}}></span>
+            <span className="roundOff" onClick={setColor} id="teal" style={{backgroundColor : "#a6feeb"}}></span>
+            <span className="roundOff" onClick={setColor} id="blue" style={{backgroundColor : "#cbf1f9"}}></span>
+            <span className="roundOff" onClick={setColor} id="darkBlue" style={{backgroundColor : "#afcafa"}}></span>
+            <span className="roundOff" onClick={setColor} id="purple" style={{backgroundColor : "#d7affa"}}></span>
+            <span className="roundOff" onClick={setColor} id="pink" style={{backgroundColor : "#fccfe9"}}></span>
+            <span className="roundOff" onClick={setColor} id="brown" style={{backgroundColor : "#e6c8a9"}}></span>
+            <span className="roundOff" onClick={setColor} id="gray" style={{backgroundColor : "#e9ebed"}}></span>
+          </span>
+          <span className="imgPalette palette">
+            <img alt="noImg" onClick={setImg} className="imgsvg roundOff" src="https://fonts.gstatic.com/s/i/googlematerialicons/image_not_supported/v12/gm_grey-24dp/1x/gm_image_not_supported_gm_grey_24dp.png"/>
+            <img alt="grocery" onClick={setImg} className="imgsvg roundOff" src="https://www.gstatic.com/keep/backgrounds/grocery_light_thumb_0615.svg"/>
+            <img alt="food" onClick={setImg} className="imgsvg roundOff" src="https://www.gstatic.com/keep/backgrounds/food_light_thumb_0615.svg"/>
+            <img alt="music" onClick={setImg} className="imgsvg roundOff" src="https://www.gstatic.com/keep/backgrounds/music_light_thumb_0615.svg"/>
+            <img alt="recipe" onClick={setImg} className="imgsvg roundOff" src="https://www.gstatic.com/keep/backgrounds/recipe_light_thumb_0615.svg"/>
+            <img alt="notes" onClick={setImg} className="imgsvg roundOff" src="https://www.gstatic.com/keep/backgrounds/notes_light_thumb_0615.svg"/>
+            <img alt="places" onClick={setImg} className="imgsvg roundOff" src="https://www.gstatic.com/keep/backgrounds/places_light_thumb_0615.svg"/>
+            <img alt="travel" onClick={setImg} className="imgsvg roundOff" src="https://www.gstatic.com/keep/backgrounds/travel_light_thumb_0615.svg"/>
+            <img alt="video" onClick={setImg} className="imgsvg roundOff" src="https://www.gstatic.com/keep/backgrounds/video_light_thumb_0615.svg"/>
+            <img alt="celebration" onClick={setImg} className="imgsvg roundOff" src="https://www.gstatic.com/keep/backgrounds/celebration_light_thumb_0715.svg"/>
+
+          </span>
+        </span>
+        <span className="editLabels" id="editLabels" onClick={(e)=>{e.stopPropagation()}}>
+          <span className="editLabelsTitle"> Edit Labels </span>
+          <span className="editLabelsInput">
+            <input type="text" name="labelSearch" id="labelSearch" placeholder="Enter label name" autoComplete="off" ref={tId} onChange={setSerVal} value={searchVal} />
+            <i className="fa-solid fa-magnifying-glass labelSearchIcon"></i>
+          </span>
+          <span className="editLabelsList">
+            {
+              filteredList.map((tag)=>{
+                return (<span key={tag} className="editLabelsItem">
+                          <input type="checkbox" tag={tag} className="editLabelsItemCheck" onChange={handleCheck} name="labelInclusion" id="labelInclusion" />
+                          <span className="editLabelsItemName" chk="false">{tag}</span>
+                        </span>)
+              })
+            }
+          </span>
+        </span>
       <Header navToggler={navToggler} getView={getView}/>
       <span className="content" id="content">
         <Nav navMode={navMode} allTagList={allTagList}  />
-        <span className={`nonNav nonNavToggleClass${navMode} `}>
-          <Takenote addNewNote={addNewNote} />
-          <Notelist view={view} noteList={noteList} setNoteList={updateNoteList} setTargetNote={setTargetNote} />
-        </span>
-          <span className="colorImg" id="palette">
-              <span className="colorPalette palette">
-                <span className="roundOff" onClick={setColor} id="none" style={{backgroundColor : "#ffffff"}}></span>
-                <span className="roundOff" onClick={setColor} id="red" style={{backgroundColor : "#f38a82"}}></span>
-                <span className="roundOff" onClick={setColor} id="orange" style={{backgroundColor : "#fbbc04"}}></span>
-                <span className="roundOff" onClick={setColor} id="yellow" style={{backgroundColor : "#fef575"}}></span>
-                <span className="roundOff" onClick={setColor} id="green" style={{backgroundColor : "#ccff90"}}></span>
-                <span className="roundOff" onClick={setColor} id="teal" style={{backgroundColor : "#a6feeb"}}></span>
-                <span className="roundOff" onClick={setColor} id="blue" style={{backgroundColor : "#cbf1f9"}}></span>
-                <span className="roundOff" onClick={setColor} id="darkBlue" style={{backgroundColor : "#afcafa"}}></span>
-                <span className="roundOff" onClick={setColor} id="purple" style={{backgroundColor : "#d7affa"}}></span>
-                <span className="roundOff" onClick={setColor} id="pink" style={{backgroundColor : "#fccfe9"}}></span>
-                <span className="roundOff" onClick={setColor} id="brown" style={{backgroundColor : "#e6c8a9"}}></span>
-                <span className="roundOff" onClick={setColor} id="gray" style={{backgroundColor : "#e9ebed"}}></span>
-              </span>
-              <span className="imgPalette palette">
-                <img alt="noImg" onClick={setImg} className="imgsvg roundOff" src="https://fonts.gstatic.com/s/i/googlematerialicons/image_not_supported/v12/gm_grey-24dp/1x/gm_image_not_supported_gm_grey_24dp.png"/>
-                <img alt="grocery" onClick={setImg} className="imgsvg roundOff" src="https://www.gstatic.com/keep/backgrounds/grocery_light_thumb_0615.svg"/>
-                <img alt="food" onClick={setImg} className="imgsvg roundOff" src="https://www.gstatic.com/keep/backgrounds/food_light_thumb_0615.svg"/>
-                <img alt="music" onClick={setImg} className="imgsvg roundOff" src="https://www.gstatic.com/keep/backgrounds/music_light_thumb_0615.svg"/>
-                <img alt="recipe" onClick={setImg} className="imgsvg roundOff" src="https://www.gstatic.com/keep/backgrounds/recipe_light_thumb_0615.svg"/>
-                <img alt="notes" onClick={setImg} className="imgsvg roundOff" src="https://www.gstatic.com/keep/backgrounds/notes_light_thumb_0615.svg"/>
-                <img alt="places" onClick={setImg} className="imgsvg roundOff" src="https://www.gstatic.com/keep/backgrounds/places_light_thumb_0615.svg"/>
-                <img alt="travel" onClick={setImg} className="imgsvg roundOff" src="https://www.gstatic.com/keep/backgrounds/travel_light_thumb_0615.svg"/>
-                <img alt="video" onClick={setImg} className="imgsvg roundOff" src="https://www.gstatic.com/keep/backgrounds/video_light_thumb_0615.svg"/>
-                <img alt="celebration" onClick={setImg} className="imgsvg roundOff" src="https://www.gstatic.com/keep/backgrounds/celebration_light_thumb_0715.svg"/>
-
-              </span>
-          </span>
-          <span className="editLabels" id="editLabels" onClick={(e)=>{e.stopPropagation()}}>
-            <span className="editLabelsTitle"> Edit Labels </span>
-            <span className="editLabelsInput">
-              <input type="text" name="labelSearch" id="labelSearch" placeholder="Enter label name" autoComplete="off" ref={tId} onChange={setSerVal} value={searchVal} />
-              <i className="fa-solid fa-magnifying-glass labelSearchIcon"></i>
+        <Routes>
+        <Route 
+          path='/'
+          Component={()=>(
+            <span className={`nonNav nonNavToggleClass${navMode} `}>
+              <Takenote addNewNote={addNewNote} setTargetNote={setTargetNote} curTags={curTags} tagRemover={tagRemover} />
+              <Notelist view={view} noteList={noteList.filter((note)=>note.archived==false)} setNoteList={updateNoteList} setTargetNote={setTargetNote} mergeLists={mergeLists} />
             </span>
-            <span className="editLabelsList">
-              {
-                filteredList.map((tag)=>{
-                  return (<span key={tag} className="editLabelsItem">
-                            <input type="checkbox" tag={tag} className="editLabelsItemCheck" onChange={handleCheck} name="labelInclusion" id="labelInclusion" />
-                            <span className="editLabelsItemName" chk="false">{tag}</span>
-                          </span>)
-                })
-              }
+          )} />
+          <Route 
+          path='/archive'
+          Component={()=>(
+            <span className={`nonNav nonNavToggleClass${navMode} `}>
+              <Notelist view={view} noteList={noteList.filter((note)=>note.archived==true)} setNoteList={updateNoteList} setTargetNote={setTargetNote} mergeLists={mergeLists} />
             </span>
-          </span>
+          )} />
+        </Routes>
       </span>
+    </Router>
     </div>
   );
 }
