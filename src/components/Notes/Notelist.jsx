@@ -1,9 +1,18 @@
 import { useEffect, useState } from 'react';
 import Note from './Note'
+import { useLocation } from 'react-router-dom';
 
 function Notelist(props) {
-  var {view,noteList,setNoteList,setTargetNote,mergeLists} = props;
+  var {view,noteList,setNoteList,setTargetNote,mergeLists,tp,del,res} = props;
   var [title,setTitle] = useState("on");
+
+  if(tp!="trash" && tp!="note"){
+    var loc= window.location.pathname.slice(6);
+    noteList=noteList.filter(note=>note.tags.includes(loc));
+  }  
+
+  useEffect(()=>{
+  },[useLocation().pathname])
 
   const tagRemover = (id,delTag)=>{
     var changedNote = noteList.filter((note)=>note.id==id);
@@ -29,6 +38,14 @@ function Notelist(props) {
     setNoteList(changedNote[0],"img");
   }
 
+  const restore = (id)=>{
+    res(id);
+  }
+
+  const deleteForever = (id)=>{
+      del(id);
+  }
+
   const noteArchive = (id,bl) =>{
     mergeLists(id,bl);
   }
@@ -49,15 +66,11 @@ function Notelist(props) {
   }
 
   const updatePin = (noteId,bool) => {
-    setNoteList(noteList.map((note)=>{
-      if(note.id==noteId){
-        note.pinned=bool;
-        return note;
-      }
-      else{
-        return note;
-      }
-    }));
+    console.log(noteId,bool);
+    var note = noteList.filter((note)=>note.id==noteId)[0];
+    note.pinned=bool;
+    console.log(note);
+    setNoteList(note,"up");
   }
 
   return (
@@ -72,7 +85,7 @@ function Notelist(props) {
           {
             noteList.map((note)=>{
               if(!note.pinned){
-                return <Note key={note.id} note={note} tagRemover={tagRemover} noteRemover={noteRemover} checkUpdate={checkUpdate} setTargetNote={setTargetNote} updatePin={updatePin} psy={"p"} noteArchive={noteArchive} imgAdd={imgAdd}/>
+                return <Note key={note.id} note={note} tagRemover={tagRemover} noteRemover={noteRemover} checkUpdate={checkUpdate} setTargetNote={setTargetNote} updatePin={updatePin} psy={"p"} noteArchive={noteArchive} imgAdd={imgAdd} tp={tp} del={deleteForever} res={restore} />
               }
             })
           }
@@ -88,7 +101,7 @@ function Notelist(props) {
           {
             noteList.map((note)=>{
               if(note.pinned){
-                return <Note key={note.id}  note={note} tagRemover={tagRemover} noteRemover={noteRemover} checkUpdate={checkUpdate} setTargetNote={setTargetNote} updatePin={updatePin} psy={"unp"} noteArchive={noteArchive} imgAdd={imgAdd}/>
+                return <Note key={note.id}  note={note} tagRemover={tagRemover} noteRemover={noteRemover} checkUpdate={checkUpdate} setTargetNote={setTargetNote} updatePin={updatePin} psy={"unp"} noteArchive={noteArchive} imgAdd={imgAdd} tp={tp} del={deleteForever} res={restore}/>
               }
             })
           }

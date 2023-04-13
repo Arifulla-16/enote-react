@@ -48,6 +48,21 @@ function App() {
       "archived":false
     }
   ]);
+  var [trashList,setTrashList] = useState([
+    {
+      "id":100,
+      "title":"JIoa",
+      "text":"ikiedk sjdnksm amsdm",
+      "list":["hulu","crunch","me"],
+      "checkList":[true,false,false],
+      "tags":["science","home"],
+      "images":[],
+      "bgImage":"none",
+      "bgColor":"#fccfe9",
+      "pinned":false,
+      "archived":true
+    }
+  ]);
   var tId = useRef("");
   var temp = useRef("") ;
   var arr = useRef([]);
@@ -71,9 +86,10 @@ function App() {
 
   const updateNoteList = (list,typ) =>{
     if(typ=="del"){
+      setTrashList([...trashList,noteList.filter(note => note.id==list[0].id)[0]]);
       setNoteList(noteList.filter(note => note.id!=list[0].id));
     }
-    else if(typ=="tdel" || typ=="ck" || typ=="img"){
+    else if(typ=="tdel" || typ=="ck" || typ=="img"|| typ=="up"){
       setNoteList(noteList.map(note => {
         if(note.id==list.id){
           return list;
@@ -81,6 +97,15 @@ function App() {
         return note;
       }))
     }
+  }
+
+  const restore = (id)=>{
+    setNoteList([...noteList,(trashList.filter(note => note.id==id)[0])]);
+    setTrashList(trashList.filter(note => note.id!=id));
+  }
+
+  const deleteForever = (id)=>{
+    setTrashList(trashList.filter(note => note.id!=id));
   }
 
   const addNewNote = (note) =>{
@@ -311,23 +336,42 @@ function App() {
       <Header navToggler={navToggler} getView={getView}/>
       <span className="content" id="content">
         <Nav navMode={navMode} allTagList={allTagList}  />
+        <span className={`nonNav nonNavToggleClass${navMode} `}>
         <Routes>
         <Route 
           path='/'
-          Component={()=>(
-            <span className={`nonNav nonNavToggleClass${navMode} `}>
+          element={
+            <>
               <Takenote addNewNote={addNewNote} setTargetNote={setTargetNote} curTags={curTags} tagRemover={tagRemover} />
-              <Notelist view={view} noteList={noteList.filter((note)=>note.archived==false)} setNoteList={updateNoteList} setTargetNote={setTargetNote} mergeLists={mergeLists} />
-            </span>
-          )} />
-          <Route 
+              <Notelist view={view} noteList={noteList.filter((note)=>note.archived==false)} setNoteList={updateNoteList} setTargetNote={setTargetNote} mergeLists={mergeLists} tp={"note"} del={deleteForever} res={restore} />
+            </>
+          }
+
+          />
+        <Route 
           path='/archive'
-          Component={()=>(
-            <span className={`nonNav nonNavToggleClass${navMode} `}>
-              <Notelist view={view} noteList={noteList.filter((note)=>note.archived==true)} setNoteList={updateNoteList} setTargetNote={setTargetNote} mergeLists={mergeLists} />
-            </span>
-          )} />
+          element={
+              <Notelist view={view} noteList={noteList.filter((note)=>note.archived==true)} setNoteList={updateNoteList} setTargetNote={setTargetNote} mergeLists={mergeLists} tp={"note"} del={deleteForever} res={restore} />
+          } />
+        <Route 
+          path='/trash'
+          element={
+              <Notelist view={view} noteList={trashList} setNoteList={updateNoteList} setTargetNote={setTargetNote} mergeLists={mergeLists} tp={"trash"} del={deleteForever} res={restore}/>
+          } />
+          {
+            allTagList.map((tag)=>{
+              return (
+                <Route
+                key={tag}
+                path='/tags/:tag'
+                element={
+                    <Notelist view={view} noteList={noteList} setNoteList={updateNoteList} setTargetNote={setTargetNote} mergeLists={mergeLists} tp={"tag"} del={deleteForever} res={restore}/>
+                } />
+              )
+            })
+          }
         </Routes>
+        </span>
       </span>
     </Router>
     </div>

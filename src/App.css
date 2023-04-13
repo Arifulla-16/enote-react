@@ -35,7 +35,11 @@
   width:45px;
 }
 
-.icAni:hover{
+.icAni:hover,.icAniPer{
+  background-color: #ffffff00;
+}
+
+.icAniPer{
   background-color: #71717146;
 }
 
@@ -164,7 +168,13 @@
 }
 
 .navItHovClass:hover{
-  background-color: #a4a4a4;
+  background-color: #d8d8d8;
+  transition: background-color 0.6s;
+  border-radius: 20px;
+}
+
+.navItHovClassPer{
+  background-color: #ffffff;
   transition: background-color 0.6s;
   border-radius: 20px;
 }
@@ -203,6 +213,14 @@
 }
 .navToggleClass1:hover .hideTag{
   display: flex;
+}
+
+.navToggleClass1:hover .navItHovClassPer{
+  background-color: #a4a4a4;
+}
+
+.navToggleClass1:hover .icAniPer{
+  background-color: #ffffff00;
 }
 
 .nonNavToggleClass0{

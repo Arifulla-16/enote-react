@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
 function Note(props) {
-    var {note,tagRemover,noteRemover,checkUpdate,setTargetNote,updatePin,psy,noteArchive,imgAdd} = props;
+    var {note,tagRemover,noteRemover,checkUpdate,setTargetNote,updatePin,psy,noteArchive,imgAdd,tp,del,res} = props;
     var {id,title,text,list,checkList,tags,images,bgImage,bgColor,pinned} = note;
 
 
@@ -21,11 +21,27 @@ function Note(props) {
         noteArchive(tarId,!note.archived);
     }
 
+    const restore = (el)=>{
+        var tarId = el.currentTarget.getAttribute("uid");
+        res(tarId);
+    }
+
+    const deleteForever = (el)=>{
+        var tarId = el.currentTarget.getAttribute("uid");
+        del(tarId);
+    }
+
     const handleCheck = (e) =>{
-        var tarId = e.currentTarget.getAttribute("uid");
-        var ck = e.target.attributes["idx"].value;
-        var cked = e.target.checked;
-        checkUpdate(tarId,ck,cked);
+        if(tp=="trash"){
+            alert("restore to edit");/////////////////////////
+            e.preventDefault();
+        }
+        else{
+            var tarId = e.currentTarget.getAttribute("uid");
+            var ck = e.target.attributes["idx"].value;
+            var cked = e.target.checked;
+            checkUpdate(tarId,ck,cked);
+        }
     }
 
     const showImg = (e)=>{
@@ -98,7 +114,6 @@ function Note(props) {
 
 
   return (
-
     <div className='note' uid={id}>
         <span className="images">
         {
@@ -108,9 +123,11 @@ function Note(props) {
         }
         </span>
         <span className="noteContent" style={{backgroundImage:bgImage,backgroundColor:bgColor}}>
-            <span className="notePin hider">
-                <i className={`fa-solid fa-thumbtack curs`} style={style} uid={id} onClick={togglePin}> </i>
-            </span>
+            {
+            tp!="trash"&&<span className="notePin hider">
+                            <i className={`fa-solid fa-thumbtack curs`} style={style} uid={id} onClick={togglePin}> </i>
+                        </span>
+            }
             <span className="noteTitle">
                 {title}
             </span>
@@ -132,25 +149,35 @@ function Note(props) {
                     tags.map((tag)=>{
                         return (<span key={tag} className="noteLabel">
                                     <span>{tag}</span>
-                                    <div id="labelDel" onClick={delTag} tg={tag} uid={id}>
-                                        <i className="fa-solid fa-xmark fa-xl curs"></i>
-                                    </div>
+                                    {
+                                        tp!="trash"&&<div id="labelDel" onClick={delTag} tg={tag} uid={id}>
+                                                        <i className="fa-solid fa-xmark fa-xl curs"></i>
+                                                    </div>
+                                    }
                                 </span>)
                     })
                     
                 }
             </span>
-            <span className="noteOptions hider ">
-                {/*icons*/}
-                <i className="fa-solid fa-palette curs add" onClick={displayPalette} uid={id} ></i>
-                <label className="custom-file-upload">
-                    <input type="file" id="imgUpload" uid={id} onChange={showImg}/>
-                    <i className="fa-regular fa-image curs add"></i>
-                </label>
-                <i className="fa-solid fa-box-archive curs add" style={{color:`${note.archived==true?'#00000080':"#000000"}`}}  onClick={archiveNote} uid={id}></i>
-                <i className="fa-solid fa-trash curs add" onClick={delNote} uid={id}></i>
-                <i className="fa-solid fa-tags curs add" onClick={showList} uid={id}></i>
-            </span>
+            {tp!="trash"&&
+                <span className="noteOptions hider ">
+                    <i className="fa-solid fa-palette curs add" onClick={displayPalette} uid={id} ></i>
+                    <label className="custom-file-upload">
+                        <input type="file" id="imgUpload" uid={id} onChange={showImg}/>
+                        <i className="fa-regular fa-image curs add"></i>
+                    </label>
+                    <i className="fa-solid fa-box-archive curs add" style={{color:`${note.archived==true?'#00000080':"#000000"}`}}  onClick={archiveNote} uid={id}></i>
+                    <i className="fa-solid fa-trash curs add" onClick={delNote} uid={id}></i>
+                    <i className="fa-solid fa-tags curs add" onClick={showList} uid={id}></i> 
+                </span>
+            }
+            {
+                tp=="trash"&&
+                <span className="noteOptions hider ">
+                <i className="fa-solid fa-trash-can-arrow-up curs add" onClick={restore} uid={id}></i>
+                <i className="fa-solid fa-dumpster-fire curs add" onClick={deleteForever} uid={id}></i>
+                </span>
+            }
         </span>
     </div>
   )
