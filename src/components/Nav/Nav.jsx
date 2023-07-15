@@ -10,13 +10,26 @@ function Nav(props) {
     setHigh(window.location.pathname);
   },[useLocation().pathname]);
 
+  const showEditor = (e)=>{
+    document.getElementById("navELablesCont").style.display = "flex";
+    e.stopPropagation();
+  }
+
+  document.addEventListener("click",(e)=>{
+    var t =document.getElementById("navELablesCont").style.display;
+    if(t=="flex"){
+      document.getElementById("navELablesCont").style.display="none";
+    }
+    e.stopPropagation();
+  });
+
   return (
     <div className={`nav navToggleClass${props.navMode} `}>
         <Link to="/">
         <NavItem icon={"fa-regular fa-lightbulb"} tag={"Notes"} styl={props.navMode} hig={!high.includes("/tags")?high.slice(1):high.slice(6)} />
         </Link>
         <Labels labelList={props.allTagList} styl={props.navMode}/>
-        <NavItem icon={"fa-solid fa-pen"} tag={"Edit labels"} styl={props.navMode} hig={!high.includes("/tags")?high.slice(1):high.slice(6)} />
+        <NavItem icon={"fa-solid fa-pen"} tag={"Edit labels"} styl={props.navMode} shwr={showEditor} hig={!high.includes("/tags")?high.slice(1):high.slice(6)} />
         <Link to="/archive">
         <NavItem icon={"fa-solid fa-archive"} tag={"Archive"} styl={props.navMode} hig={!high.includes("/tags")?high.slice(1):high.slice(6)} />
         </Link>

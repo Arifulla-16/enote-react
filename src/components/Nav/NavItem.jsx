@@ -1,12 +1,12 @@
 import React from 'react'
 
 function NavItem(props) {
-    let {icon,tag,styl,hig} = props;
+    let {icon,tag,styl,hig,shwr} = props;
     if(hig==""){
       hig="notes";
     }
   return (
-    <div className={`navItem ${tag.toLowerCase()==hig.toLowerCase()?"navItHovClassPer":"navItHovClass" }`}>
+    <div className={`navItem navItHovClass ${tag.toLowerCase()==hig.toLowerCase()?"navItHovClassPer":"" }`} onClick={shwr}>
         <span className="navIcon">
         <span className={`icAni ${tag.toLowerCase()==hig.toLowerCase()?"icAniPer":"" }`}>
         <i className={`${icon} fa-xl`}></i>

@@ -41,6 +41,7 @@
 
 .icAniPer{
   background-color: #71717146;
+  transition: background-color 0.5s;
 }
 
 .appTitle{
@@ -167,10 +168,15 @@
   white-space: nowrap;
 }
 
-.navItHovClass:hover{
+.navItHovClass:hover {
   background-color: #d8d8d8;
   transition: background-color 0.6s;
   border-radius: 20px;
+}
+
+.navItHovClass:hover .icAniPer{
+  background-color: #ffffff00;
+  transition: background-color 0.5s;
 }
 
 .navItHovClassPer{
@@ -215,12 +221,8 @@
   display: flex;
 }
 
-.navToggleClass1:hover .navItHovClassPer{
-  background-color: #a4a4a4;
-}
-
 .navToggleClass1:hover .icAniPer{
-  background-color: #ffffff00;
+  background-color: #d8d8d8;
 }
 
 .nonNavToggleClass0{
@@ -422,6 +424,20 @@
 }
 
 /* notelist */
+
+.noNotes{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  right: 80px;
+  font-size: 1.5rem;
+  height: 50vh;
+  width: 100%;
+}
+.pinnedAndUnpinned>div{
+  width:100%;
+}
 
 .pinnedAndUnpinned{
   display: flex;
@@ -659,37 +675,99 @@ ul{
   row-gap: 7px;
 }
 
+.navELablesCont{
+  display: none;
+  position: fixed;
+  background-color: #000000b0;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  z-index: 1;
+}
+
+.navELables{
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center; */
+  align-items: center;
+  background-color: white;
+  border:1px solid black;
+  padding:10px;
+  border-radius: 5px;
+  row-gap: 7px;
+  z-index: 1;
+  max-height: 50vh;
+  overflow: scroll;
+}
+
 .editLabelsTitle{
   font-size: 1.2rem;
   font-weight: 500;
 }
 
-.editLabelsInput{
+.editLabelsInput,.navELablesInput{
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 2px;
 }
 
-#labelSearch{
+#labelSearch,#labelAdd,.labelEdit{
   border-style: none;
 }
 
-#labelSearch:focus{
+#labelAdd{
+  padding: 0 10px;
+}
+
+.labelEdit{
+  display: none;
+  width: 100%;
+}
+
+#labelSearch:focus,#labelAdd:focus,.labelEdit:focus{
   outline: none;
 }
 
-.editLabelsList{
+.editLabelsList,.navELablesList{
   display:flex;
   flex-direction: column;
+  width: 100%;
 }
 
-.editLabelsItem{
+.editLabelsItem,.navELablesItem{
   display:flex;
   align-items: center;
   column-gap: 5px;
 }
 
+.navELablesItem{
+  width: 100%;
+}
+
+.navELablesItemName{
+  flex-grow: 1;
+}
+
+.navELablesItemTg2{
+  display: none;
+}
+
+.navELablesItem:hover .navELablesItemTg1{
+  display: none;
+}
+
+.navELablesItem:hover .navELablesItemTg2{
+  display: inline;
+}
+
+.navELablesItemTick{
+  display: none;
+}
+
 input[type=text]{
   background-color: #86818b00;
 }
+

@@ -69,6 +69,9 @@ function Takenote(props) {
         "pinned":psy=="p"?false:true,
         "archived":archive
       };
+      if(window.location.pathname.includes("/tags")){
+        note.tags.push(window.location.pathname.slice(6));
+      }
       props.addNewNote(note);
       setTitleVal("");
       setNoteVal("");

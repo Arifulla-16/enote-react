@@ -75,9 +75,113 @@ function App() {
   var [searchVal,setSearchVal] = useState("");
   var [reqArr,setReqArr] =useState([]);
   var [curTags,setCurTags] = useState([]);
+  var editVal = useRef("");
+  var [targetEditTag,setTargetEditTag]=useState("");
 
   const navToggler = ()=>{
     navMode===0?setNavMode(1):setNavMode(0);
+  }
+
+  const deleteTagsAll = (e)=>{
+    var tarTg = e.currentTarget.getAttribute("tg");
+    var newList = [...noteList];
+    setNoteList(newList.map((note)=>{
+        if(note.tags.includes(tarTg)){
+          note.tags.splice(note.tags.indexOf(tarTg),1);
+        }
+        return note;
+      }));
+    newList = [...trashList];
+    setTrashList(newList.map((note)=>{
+      if(note.tags.includes(tarTg)){
+        note.tags.splice(note.tags.indexOf(tarTg),1);
+      }
+      return note;
+    }));
+    newList= [...allTagList];
+    newList.splice(newList.indexOf(tarTg),1)
+    setAllTagList(newList);
+    e.stopPropagation();
+  }
+
+  const editTagsAll = (e) =>{
+    var tarTg = e.currentTarget.getAttribute("tg");
+    if(targetEditTag!=""){
+      console.log("kjcidadolacl,ca;s,c;sa,c;ac,alscmkamdcaldmvsdlm");
+      document.getElementById(`${targetEditTag}NavELablesItemName`).style.display="inline";
+      document.getElementById(`${targetEditTag}LabelEdit`).style.display="none";
+      document.getElementById(`${targetEditTag}NavELablesItemPen`).style.display="inline";
+      document.getElementById(`${targetEditTag}NavELablesItemTick`).style.display="none";
+    }
+    setTargetEditTag(tarTg);
+    var box = document.getElementById(`${tarTg}LabelEdit`);
+    var tg = document.getElementById(`${tarTg}NavELablesItemName`);
+    var tk = document.getElementById(`${tarTg}NavELablesItemTick`);
+    var pen = document.getElementById(`${tarTg}NavELablesItemPen`);
+    // setEVal(tg.innerText);
+    editVal.current=tg.innerText;
+    box.style.display="inline";
+    box.focus();
+    box.value=editVal.current;
+    tg.style.display="none";
+    tk.style.display="inline";
+    pen.style.display="none";
+    console.log(editVal.current,box.getAttribute("value"));
+    e.stopPropagation();
+  }
+
+  const applyEditAll = (e)=>{
+    var tarTg = e.currentTarget.getAttribute("tg");
+    var box = document.getElementById(`${tarTg}LabelEdit`);
+    var prevName = document.getElementById(`${tarTg}NavELablesItemName`);
+    var tk = document.getElementById(`${tarTg}NavELablesItemTick`);
+    var pen = document.getElementById(`${tarTg}NavELablesItemPen`);
+    
+    if(allTagList.indexOf(editVal.current)==-1){
+      replaceNoteListLabels(editVal.current,prevName.innerText);
+      var newTagList=allTagList;
+      newTagList.splice(newTagList.indexOf(prevName.innerText),1,editVal.current);
+      prevName.innerText=editVal.current;
+      setAllTagList(newTagList);
+      setFilteredList(newTagList);
+    }
+    else{
+      alert("tag Already exists");
+    }
+    prevName.style.display="inline";
+    box.value="";
+    box.style.display="none";
+    tk.style.display="none";
+    pen.style.display="inline";
+    setTargetEditTag("");
+    e.stopPropagation();
+  }
+
+  const addNewLabel = (e)=>{
+    if(allTagList.indexOf(editVal.current)==-1){
+      var nList=allTagList.slice();
+      nList.push(editVal.current);
+      setAllTagList(nList);
+    }
+    else{
+      alert("tag Already exists");
+    }
+    document.getElementById("labelAdd").value="";
+  }
+
+  const replaceNoteListLabels = (present,past)=>{
+    var nList = noteList;
+    nList.map((note)=>{
+       note.tags.splice(note.tags.indexOf(past),1,present);
+       return note;
+    });
+    setNoteList(nList);
+    nList=trashList;
+    nList.map((note)=>{
+      note.tags.splice(note.tags.indexOf(past),1,present);
+      return note;
+   });
+   setTrashList(nList);
   }
 
   const getView = (retView)=>{
@@ -187,6 +291,10 @@ function App() {
     setSearchVal(tId.current.value);
     arrayMaker();
     filterTags();
+  }
+
+  const setEditValue = (e) =>{
+    editVal.current = e.target.value;
   }
 
   const arrayMaker = useCallback(()=>{
@@ -333,6 +441,29 @@ function App() {
             }
           </span>
         </span>
+        <span className="navELablesCont" id="navELablesCont" >
+          <span className="navELables" id="navELables" onClick={(e)=>{e.stopPropagation()}}>
+            <span className="navELablesInput">
+              <i className="fa-solid fa-xmark curs" id="navELablesClose" onClick={()=>{document.getElementById("navELablesCont").style.display = "none"}} ></i>
+              <input type="text" name="labelAdd" id="labelAdd" placeholder="Create a label" autoComplete="off" onClick={(e)=>{e.stopPropagation()}} onChange={setEditValue} />
+              <i className="fa-solid fa-check curs" onClick={addNewLabel} ></i>
+            </span>
+            <span className="navELablesList">
+              {
+                allTagList.map((tag)=>{
+                  return (<span key={tag} className="navELablesItem">
+                            <i className="fa-solid fa-hashtag navELablesItemTg1 curs"></i>
+                            <i className="fa-solid fa-trash navELablesItemTg2 curs" onClick={deleteTagsAll} tg={tag}></i>
+                            <span className="navELablesItemName" id={`${tag}NavELablesItemName`} onClick={(e)=>{e.stopPropagation()}} >{tag}</span>
+                            <input type="text" name="labelEdit" className='labelEdit' id={`${tag}LabelEdit`} autoComplete="off" onClick={(e)=>{e.stopPropagation()}} onChange={setEditValue}  />
+                            <i className="fa-solid fa-pen curs navELablesItemPen" id={`${tag}NavELablesItemPen`} onClick={editTagsAll} tg={tag}></i>
+                            <i className="fa-solid fa-check curs navELablesItemTick" id={`${tag}NavELablesItemTick`} onClick={applyEditAll} tg={tag}></i>
+                          </span>)
+                })
+              }
+            </span>
+          </span>
+        </span>
       <Header navToggler={navToggler} getView={getView}/>
       <span className="content" id="content">
         <Nav navMode={navMode} allTagList={allTagList}  />
@@ -365,7 +496,10 @@ function App() {
                 key={tag}
                 path='/tags/:tag'
                 element={
+                  <>
+                    <Takenote addNewNote={addNewNote} setTargetNote={setTargetNote} curTags={curTags} tagRemover={tagRemover} />
                     <Notelist view={view} noteList={noteList} setNoteList={updateNoteList} setTargetNote={setTargetNote} mergeLists={mergeLists} tp={"tag"} del={deleteForever} res={restore}/>
+                  </>
                 } />
               )
             })

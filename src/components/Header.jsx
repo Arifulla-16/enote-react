@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
+import { Link ,useLocation} from "react-router-dom";
 
 function Header(props) {
   var [view,setView] = useState("list");
@@ -8,6 +9,12 @@ function Header(props) {
   };
 
   var [serchBarVisibility,setVisibility] = useState("hidden");
+  var [appName,setAppName]=useState(useLocation().pathname);
+
+  useEffect(()=>{
+    setAppName(window.location.pathname);
+  },[useLocation().pathname]);
+
   const toggleSearchBar=()=>{
     serchBarVisibility==="hidden"?setVisibility("show"):setVisibility("hidden");
   }
@@ -20,7 +27,9 @@ function Header(props) {
           </span>
         </span>
         <span className="appTitle">
-          Enote
+          {
+            !appName.includes("/tags")?(appName.slice(1)==""?"Enote":appName.slice(1).charAt(0).toUpperCase()+appName.slice(1).substring(1)):(appName.slice(6).charAt(0).toUpperCase()+appName.slice(6).substring(1))
+          }
         </span>
         <span className="search">
           <span className={`serchBar ${serchBarVisibility==="hidden"?"hideSearch":""}`}>

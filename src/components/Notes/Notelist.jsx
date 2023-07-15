@@ -78,12 +78,12 @@ function Notelist(props) {
       <div>
         <span className="listSectionTitle">
           {
-            title=="on"?"Other":""
+            title=="on"?"Unpinned":""
           }
         </span>
         <div className={`noteList ${view==="grid"?"":"listView"}`}>
-          {
-            noteList.map((note)=>{
+          {noteList.length==0?<div class="noNotes">No Notes Available</div>:" "}
+          { noteList.map((note)=>{
               if(!note.pinned){
                 return <Note key={note.id} note={note} tagRemover={tagRemover} noteRemover={noteRemover} checkUpdate={checkUpdate} setTargetNote={setTargetNote} updatePin={updatePin} psy={"p"} noteArchive={noteArchive} imgAdd={imgAdd} tp={tp} del={deleteForever} res={restore} />
               }
