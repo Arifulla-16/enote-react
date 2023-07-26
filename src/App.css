@@ -47,7 +47,8 @@
 .appTitle{
   /* flex-grow: 0.5; */
   cursor: pointer;
-  margin-left: 30px;
+  margin-bottom: 3px;
+    margin-left: 11px;
   font-size: 1.6rem;
   font-weight: 600;
 }
@@ -106,6 +107,10 @@
   cursor: pointer;
 }
 
+.hide{
+  display: none;
+}
+
 .profile{
   display: flex;
   align-items: center;
@@ -121,8 +126,8 @@
   justify-content: center;
   border: 1px solid black;
   border-radius: 50%;
-  height: 45px;
-  width:45px;
+  height: 34px;
+  width:34px;
 }
 
 /* nav */
@@ -196,6 +201,8 @@
 
 .navToggleClass0{
   width:280px;
+  background-color: white;
+  border-right: 1px solid rgb(161, 161, 161);
   transition:width 0.1s ;
 }
 
@@ -207,10 +214,21 @@
   transition-delay:0.2s;
 }
 
+.mobileTrans{
+  position: fixed;
+  width:280px;
+  background-color: white;
+  box-shadow: 0 5px 5px black;
+  transition:width 0.1s ;
+  transition-delay:0.2s;
+}
+
 
 .navToggleClass1{
   position: fixed;
   width:86px;
+  background-color: white;
+  border-right: 1px solid rgb(161, 161, 161);
   transition:width 0.1s ;
 }
 
@@ -430,10 +448,10 @@
   justify-content: center;
   align-items: center;
   position: relative;
-  right: 80px;
   font-size: 1.5rem;
   height: 50vh;
   width: 100%;
+  z-index: -1;
 }
 .pinnedAndUnpinned>div{
   width:100%;
@@ -443,6 +461,7 @@
   display: flex;
   flex-direction: column-reverse;
   width:85%;
+  margin: 20px;
   margin-left:150px;
 }
 
@@ -451,6 +470,13 @@
   font-weight: 900px;
   margin-left: 20px;
   color:#86818b ;
+  text-align: center;
+}
+
+.pinFlexr{
+  display: flex;
+  flex-direction: column;
+  margin-right: min(100% , 500px);
 }
 
 .noteList{
@@ -475,6 +501,10 @@
   height: max-content;
   border-radius: 5px;
   overflow: hidden;
+}
+
+.noteResize{
+  width: min(100% , 600px);
 }
 
 .images{
@@ -639,8 +669,8 @@ ul{
 .notePin {
   position:relative;
   top:30px;
-  left: 200px;
-  z-index: 0;
+  left:min(100% , 540px);
+  /* z-index: 0; */
   width:15px;
   margin-top: -25px;
 }
@@ -653,7 +683,6 @@ ul{
 .note:hover  .hider{
   visibility: visible;
   opacity:100%;
-  transition: opacity 0.5s;
 }
 
 .note:hover{
@@ -671,6 +700,7 @@ ul{
   flex-direction: column;
   border:1px solid black;
   padding:10px;
+  z-index: 1;
   border-radius: 5px;
   row-gap: 7px;
 }
@@ -771,3 +801,10 @@ input[type=text]{
   background-color: #86818b00;
 }
 
+
+
+@media only screen and (max-width: 700px) {
+  .noNotes{
+    font-size: 1rem;
+  }
+}

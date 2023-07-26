@@ -3,111 +3,219 @@ import './App.css';
 import { BrowserRouter as Router, Routes , Route} from "react-router-dom";
 import Header from './components/Header';
 import Nav from './components/Nav/Nav';
+import Api from './components/Api';
 import Notelist from './components/Notes/Notelist';
 import Takenote from './components/Notes/Takenote';
+import { v4 as uuidv4 } from 'uuid';
+import axios from 'axios';
 
 function App() {
-  var [noteList,setNoteList] = useState([
-    {
-      "id":1,
-      "title":"Abc",
-      "text":"Done in the of king",
-      "list":[],
-      "checkList":[],
-      "tags":["study","done"],
-      "images":[],
-      "bgImage":"https://www.gstatic.com/keep/backgrounds/notes_light_thumb_0615.svg",
-      "bgColor":"#ccff90",
-      "pinned":true,
-      "archived":false
-    },
-    {
-      "id":2,
-      "title":"Def",
-      "text":"",
-      "list":["hulu","crunch","me"],
-      "checkList":[true,false,false],
-      "tags":["science","home"],
-      "images":[],
-      "bgImage":"none",
-      "bgColor":"#fccfe9",
-      "pinned":false,
-      "archived":true
-    },
-    {
-      "id":3,
-      "title":"Ghi",
-      "text":"Not mine",
-      "list":[],
-      "checkList":[],
-      "tags":["misc","home"],
-      "images":[],
-      "bgImage":"none",
-      "bgColor":"#a6feeb",
-      "pinned":false,
-      "archived":false
-    }
-  ]);
-  var [trashList,setTrashList] = useState([
-    {
-      "id":100,
-      "title":"JIoa",
-      "text":"ikiedk sjdnksm amsdm",
-      "list":["hulu","crunch","me"],
-      "checkList":[true,false,false],
-      "tags":["science","home"],
-      "images":[],
-      "bgImage":"none",
-      "bgColor":"#fccfe9",
-      "pinned":false,
-      "archived":true
-    }
-  ]);
+  var [noteList,setNoteList] = useState([]);
+  // {
+  //   "id":1,
+  //   "title":"Abc",
+  //   "text":"Done in the of king",
+  //   "list":[],
+  //   "checkList":[],
+  //   "tags":["study","done"],
+  //   "images":[],
+  //   "bgImage":"https://www.gstatic.com/keep/backgrounds/notes_light_thumb_0615.svg",
+  //   "bgColor":"#ccff90",
+  //   "pinned":true,
+  //   "archived":false
+  // },
+  // {
+  //   "id":2,
+  //   "title":"Def",
+  //   "text":"",
+  //   "list":["hulu","crunch","me"],
+  //   "checkList":[true,false,false],
+  //   "tags":["science","home"],
+  //   "images":[],
+  //   "bgImage":"none",
+  //   "bgColor":"#fccfe9",
+  //   "pinned":false,
+  //   "archived":true
+  // },
+  // {
+  //   "id":3,
+  //   "title":"Ghi",
+  //   "text":"Not mine",
+  //   "list":[],
+  //   "checkList":[],
+  //   "tags":["misc","home"],
+  //   "images":[],
+  //   "bgImage":"none",
+  //   "bgColor":"#a6feeb",
+  //   "pinned":false,
+  //   "archived":false
+  // }
+  var [trashList,setTrashList] = useState([]);
   var tId = useRef("");
   var temp = useRef("") ;
   var arr = useRef([]);
-  var [allTagList,setAllTagList] = useState(["study","done","science","home","misc","new","note","one"]);
-  var [idx,setIdx] = useState(3);
+  var [allTagList,setAllTagList] = useState([]);
+  // var [idx,setIdx] = useState(3);"study","done","science","home","misc","new","note","one"
   var [navMode,setNavMode] = useState(0);
   var [targetNote,setTargetNote] = useState("TNT");
   var [view,setView] = useState("grid");
   var [filteredList,setFilteredList] = useState([...allTagList]);
+  var [fList,setFList] = useState([]);
   var [searchVal,setSearchVal] = useState("");
   var [reqArr,setReqArr] =useState([]);
   var [curTags,setCurTags] = useState([]);
   var editVal = useRef("");
   var [targetEditTag,setTargetEditTag]=useState("");
+  var [isMobile, setIsMobile] = useState(false);
+  var [addDisplay,setAddDisplay]=useState("none");
+  // var [editId,setEditId]=useState(0);
+  // var [func,setFunc]=useState();
+ 
+const handleResize = () => {
+  if (window.innerWidth < 700) {
+      setIsMobile(true)
+      setNavMode(1)
+      setView("flex");
+  } else {
+      setIsMobile(false)
+  }
+}
 
-  const navToggler = ()=>{
-    navMode===0?setNavMode(1):setNavMode(0);
+setTimeout(()=>{
+  if (window.innerWidth < 700) {
+    setIsMobile(true)
+    setNavMode(1)
+    setView("flex");
+  }
+},100);
+
+// create an event listener
+useEffect(() => {
+  window.addEventListener("resize", handleResize)
+})
+
+  useEffect(() => {
+    Api.get("/notes").then((response) => {
+      setNoteList(response.data);
+    });
+    Api.get("/trash").then((response) => {
+      setTrashList(response.data);
+    });
+    Api.get("/tags").then((response)=>{
+      setAllTagList(response.data);
+      setFilteredList(response.data);
+    })
+  }, [])
+
+  const asyncHandler = async(nList,ids)=>{
+    await nList.forEach((note) => {
+      ids.push(note.id);
+      Api.put(`/notes/${note.id}`,note);
+    });
+  }
+  const asynctrHandler = async(nList,ids)=>{
+    await nList.forEach((note) => {
+      ids.push(note.id);
+      Api.put(`/trash/${note.id}`,note);
+    });
+  }
+  const dbHandler = (nList)=>{
+        var ids = [];
+        asyncHandler(nList,ids).then(()=>{
+          var list = noteList.slice();
+          list = list.map((note)=>{
+            if(ids.includes(note.id)){
+              return nList.filter(nt=>nt.id===note.id)[0];
+            }
+            return note;
+          })
+          setNoteList(list);
+        });
+  }
+
+  const trdbHandler = (nList)=>{
+    var ids=[];
+    asynctrHandler(nList,ids).then(()=>{
+      var list = noteList.slice();
+      list = list.map((note)=>{
+        if(ids.includes(note.id)){
+          return nList.filter(nt=>nt.id===note.id)[0];
+        }
+        return note;
+      })
+      setTrashList(list);
+    });
+  }
+
+  const navToggler = (e)=>{
+    var nav = document.getElementsByClassName("nav");
+    var navTag = document.getElementsByClassName("navTag");
+    if(isMobile){
+      setNavMode(1);
+      if(nav[0].classList.contains("mobileTrans")){
+        nav[0].classList.remove("mobileTrans");
+        nav[0].classList.add("navToggleClass1");
+        Array.from(navTag).forEach((tag)=>{
+          tag.classList.add("hideTag");
+        });
+      }
+      else{
+        nav[0].classList.add("mobileTrans");
+        nav[0].classList.remove("navToggleClass1");
+        Array.from(navTag).forEach((tag)=>{
+          tag.classList.remove("hideTag");
+        });
+      }
+    }
+    else{
+      navMode===0?setNavMode(1):setNavMode(0);
+    }
+    e.stopPropagation();
   }
 
   const deleteTagsAll = (e)=>{
     var tarTg = e.currentTarget.getAttribute("tg");
     var newList = [...noteList];
-    setNoteList(newList.map((note)=>{
-        if(note.tags.includes(tarTg)){
-          note.tags.splice(note.tags.indexOf(tarTg),1);
-        }
-        return note;
-      }));
-    newList = [...trashList];
-    setTrashList(newList.map((note)=>{
+    var ids=[];
+    newList=newList.map((note)=>{
       if(note.tags.includes(tarTg)){
+        ids.push(note.id);
         note.tags.splice(note.tags.indexOf(tarTg),1);
       }
       return note;
-    }));
+    });
+    if(ids.length>0){
+      var nList=newList.filter((note)=>ids.includes(note.id));
+      dbHandler(nList);
+    }
+
+    ids=[];
+    newList = [...trashList];
+    newList=newList.map((note)=>{
+      if(note.tags.includes(tarTg)){
+        ids.push(note.id);
+        note.tags.splice(note.tags.indexOf(tarTg),1);
+      }
+      return note;
+    });
+    if(ids.length>0){
+      var nList=newList.filter((note)=>ids.includes(note.id));
+      trdbHandler(nList);
+    }
+
     newList= [...allTagList];
     newList.splice(newList.indexOf(tarTg),1)
-    setAllTagList(newList);
+    Api.put("/tags",newList)
+    .then(()=>{
+      setAllTagList(newList);
+      setFilteredList(newList);
+    })
     e.stopPropagation();
   }
 
   const editTagsAll = (e) =>{
     var tarTg = e.currentTarget.getAttribute("tg");
     if(targetEditTag!=""){
-      console.log("kjcidadolacl,ca;s,c;sa,c;ac,alscmkamdcaldmvsdlm");
       document.getElementById(`${targetEditTag}NavELablesItemName`).style.display="inline";
       document.getElementById(`${targetEditTag}LabelEdit`).style.display="none";
       document.getElementById(`${targetEditTag}NavELablesItemPen`).style.display="inline";
@@ -126,7 +234,7 @@ function App() {
     tg.style.display="none";
     tk.style.display="inline";
     pen.style.display="none";
-    console.log(editVal.current,box.getAttribute("value"));
+    editVal.current="";
     e.stopPropagation();
   }
 
@@ -137,15 +245,18 @@ function App() {
     var tk = document.getElementById(`${tarTg}NavELablesItemTick`);
     var pen = document.getElementById(`${tarTg}NavELablesItemPen`);
     
-    if(allTagList.indexOf(editVal.current)==-1){
+    if(allTagList.indexOf(editVal.current)==-1 && editVal.current!==""){
       replaceNoteListLabels(editVal.current,prevName.innerText);
       var newTagList=allTagList;
       newTagList.splice(newTagList.indexOf(prevName.innerText),1,editVal.current);
       prevName.innerText=editVal.current;
-      setAllTagList(newTagList);
-      setFilteredList(newTagList);
+      Api.put("/tags",newTagList).then((response)=>{
+        setAllTagList(newTagList)
+        setFilteredList(newTagList)
+      })
+      editVal.current=""
     }
-    else{
+    else if(editVal.current!==""){
       alert("tag Already exists");
     }
     prevName.style.display="inline";
@@ -157,70 +268,118 @@ function App() {
     e.stopPropagation();
   }
 
+  const createLabel=()=>{
+    var nList = allTagList;
+    nList.push(tId.current.value);
+    var fl = [...filteredList];
+    fl.push(tId.current.value);
+      Api.put("/tags",nList)
+    .then(()=>{
+      setAllTagList(nList);
+      setFilteredList(fl);
+    })
+    setAddDisplay("none");
+  }
+
   const addNewLabel = (e)=>{
-    if(allTagList.indexOf(editVal.current)==-1){
+    if(allTagList.indexOf(editVal.current)==-1 && editVal.current!==""){
       var nList=allTagList.slice();
       nList.push(editVal.current);
+      Api.put("/tags",nList)
+    .then(()=>{
       setAllTagList(nList);
+      setFilteredList(nList);
+    })
     }
-    else{
+    else if(editVal.current!==""){
       alert("tag Already exists");
     }
     document.getElementById("labelAdd").value="";
+    editVal.current=""
   }
 
   const replaceNoteListLabels = (present,past)=>{
     var nList = noteList;
-    nList.map((note)=>{
-       note.tags.splice(note.tags.indexOf(past),1,present);
-       return note;
+    var ids = [];
+    nList=nList.map((note)=>{
+      if(note.tags.indexOf(past)!=-1){
+        note.tags.splice(note.tags.indexOf(past),1,present);
+        ids.push(note.id);
+      }
+      return note;
     });
-    setNoteList(nList);
+    if(ids.length>0){
+      var newList=nList.filter((note)=>ids.includes(note.id));
+      dbHandler(newList);
+    }
+
+    ids = [];
     nList=trashList;
-    nList.map((note)=>{
-      note.tags.splice(note.tags.indexOf(past),1,present);
+    nList=nList.map((note)=>{
+      if(note.tags.indexOf(past)!=-1){
+        note.tags.splice(note.tags.indexOf(past),1,present);
+        ids.push(note.id);
+      }
       return note;
    });
-   setTrashList(nList);
+    if(ids.length>0){
+      var newList=nList.filter((note)=>ids.includes(note.id));
+      trdbHandler(newList);
+    }
   }
 
-  const getView = (retView)=>{
-    setView(retView);
+  const getView = ()=>{
+    view==="grid"?setView("list"):setView("grid");
   }
 
   const updateNoteList = (list,typ) =>{
     if(typ=="del"){
-      setTrashList([...trashList,noteList.filter(note => note.id==list[0].id)[0]]);
-      setNoteList(noteList.filter(note => note.id!=list[0].id));
+      var deNote =noteList.filter(note => note.id==list[0].id)[0];
+      Api.post("/trash",deNote,{headers: {'Content-Type': 'application/json; charset=UTF-8',"Access-Control-Allow-Origin": "*"}})
+      .then(setTrashList([...trashList,noteList.filter(note => note.id==list[0].id)[0]]));
+      Api.delete(`/notes/${deNote.id}`)
+      .then(setNoteList(noteList.filter(note => note.id!=list[0].id)))
     }
     else if(typ=="tdel" || typ=="ck" || typ=="img"|| typ=="up"){
-      setNoteList(noteList.map(note => {
+      Api.put(`/notes/${list.id}`,noteList.filter((nt)=>nt.id===list.id)[0])
+      .then(setNoteList(noteList.map(note => {
         if(note.id==list.id){
           return list;
         }
         return note;
-      }))
+      })));
     }
   }
 
   const restore = (id)=>{
-    setNoteList([...noteList,(trashList.filter(note => note.id==id)[0])]);
-    setTrashList(trashList.filter(note => note.id!=id));
+    var k= trashList.filter(note => note.id==id);
+    Api.post(`/notes`,k[0])
+    .then(
+      setNoteList([...noteList,k[0]]))
+    Api.delete(`/trash/${id}`)
+    .then(
+      setTrashList(trashList.filter(note => note.id!=id)))
   }
 
   const deleteForever = (id)=>{
-    setTrashList(trashList.filter(note => note.id!=id));
+    Api.delete(`/trash/${id}`)
+    .then(
+      setTrashList(trashList.filter(note => note.id!=id)))
   }
 
-  const addNewNote = (note) =>{
-    note.id=idx+1;
-    // note.images = [`${(idx%4)+1}`,`${((idx+1)%4)+1}`];
-    // `${(idx%4)+1}`,`${((idx+1)%4)+1}`
-    setIdx(idx+1);
+  const addNewNote = async(note) =>{
+    note.id=uuidv4();
     var upList = noteList.slice();
     upList.push(note);
-    setNoteList(upList);
+    Api.post("/notes",note,{headers: {'Content-Type': 'application/json; charset=UTF-8',"Access-Control-Allow-Origin": "*"}}).then(setNoteList(upList));
   }
+
+  const getEditNote = (id)=>{
+    const evt = new CustomEvent("custevt", { bubbles: true ,detail: {id: id}});
+
+    document.dispatchEvent(evt);
+  }
+
 
   const setColor = (e) => {
     var color = e.target.attributes["style"].value.slice(18).slice(0,-1);
@@ -239,6 +398,8 @@ function App() {
           return note;
         }
       });
+      var note = newList.filter(nt=>nt.id===targetNote)[0];
+      Api.put(`/notes/${targetNote}`,note);
       setNoteList(newList);
     }
   }
@@ -260,6 +421,8 @@ function App() {
           return note;
         }
       });
+      var note = newList.filter(nt=>nt.id===targetNote)[0];
+      Api.put(`/notes/${targetNote}`,note);
       setNoteList(newList);
     }
   }
@@ -282,6 +445,8 @@ function App() {
           return note;
         }
       });
+      var note = newList.filter(nt=>nt.id===targetNote)[0];
+      Api.put(`/notes/${targetNote}`,note);
       setNoteList(newList);
     }
     e.stopPropagation();
@@ -289,6 +454,12 @@ function App() {
 
   const setSerVal = () =>{
     setSearchVal(tId.current.value);
+    if(!allTagList.includes(tId.current.value) && tId.current.value!=""){
+      setAddDisplay("inherit");
+    }
+    else{
+      setAddDisplay("none");
+    }
     arrayMaker();
     filterTags();
   }
@@ -379,6 +550,17 @@ function App() {
     if(editLabels.style.display !== 'none'){
       editLabels.style.display = 'none';
     }
+    var nav = document.getElementsByClassName("nav");
+    var navTag = document.getElementsByClassName("navTag");
+    if(isMobile){
+      if(nav[0].classList.contains("mobileTrans")){
+        nav[0].classList.remove("mobileTrans");
+        nav[0].classList.add("navToggleClass1");
+        Array.from(navTag).forEach((tag)=>{
+          tag.classList.add("hideTag");
+        });
+      }
+    }
     e.stopPropagation();
   });
 
@@ -389,6 +571,9 @@ function App() {
       }
       return note;
     })
+    var note = noteList.filter((nt)=>nt.id===lid)[0]
+    note.archived=bl
+    Api.put(`/notes/${note.id}`,note);
     setNoteList(list);
   }
 
@@ -440,6 +625,11 @@ function App() {
               })
             }
           </span>
+          <span className="editLabelsListAdd" id="editLabelsListAdd" style={{display:addDisplay}} onClick={createLabel}>
+              {
+                `+ Create "${tId.current.value}"`
+              }
+          </span>
         </span>
         <span className="navELablesCont" id="navELablesCont" >
           <span className="navELables" id="navELables" onClick={(e)=>{e.stopPropagation()}}>
@@ -464,7 +654,7 @@ function App() {
             </span>
           </span>
         </span>
-      <Header navToggler={navToggler} getView={getView}/>
+      <Header isMobile={isMobile} navToggler={navToggler} getView={getView} noteList={noteList} setFList={setFList} view={view}/>
       <span className="content" id="content">
         <Nav navMode={navMode} allTagList={allTagList}  />
         <span className={`nonNav nonNavToggleClass${navMode} `}>
@@ -473,8 +663,8 @@ function App() {
           path='/'
           element={
             <>
-              <Takenote addNewNote={addNewNote} setTargetNote={setTargetNote} curTags={curTags} tagRemover={tagRemover} />
-              <Notelist view={view} noteList={noteList.filter((note)=>note.archived==false)} setNoteList={updateNoteList} setTargetNote={setTargetNote} mergeLists={mergeLists} tp={"note"} del={deleteForever} res={restore} />
+              <Takenote addNewNote={addNewNote} setTargetNote={setTargetNote} curTags={curTags} tagRemover={tagRemover} noteList={noteList} />
+              <Notelist view={view} noteList={noteList.filter((note)=>note.archived==false)} setNoteList={updateNoteList} setTargetNote={setTargetNote} mergeLists={mergeLists} tp={"note"} del={deleteForever} res={restore} getEditNote={getEditNote} />
             </>
           }
 
@@ -482,12 +672,20 @@ function App() {
         <Route 
           path='/archive'
           element={
-              <Notelist view={view} noteList={noteList.filter((note)=>note.archived==true)} setNoteList={updateNoteList} setTargetNote={setTargetNote} mergeLists={mergeLists} tp={"note"} del={deleteForever} res={restore} />
+              <Notelist view={view} noteList={noteList.filter((note)=>note.archived==true)} setNoteList={updateNoteList} setTargetNote={setTargetNote} mergeLists={mergeLists} tp={"note"} del={deleteForever} res={restore} getEditNote={getEditNote} />
+          } />
+
+        <Route 
+          path='/search'
+          element={
+            <>
+              <Notelist view={view} noteList={fList} setNoteList={updateNoteList} setTargetNote={setTargetNote} mergeLists={mergeLists} tp={"note"} del={deleteForever} res={restore} getEditNote={getEditNote} />
+            </>
           } />
         <Route 
           path='/trash'
           element={
-              <Notelist view={view} noteList={trashList} setNoteList={updateNoteList} setTargetNote={setTargetNote} mergeLists={mergeLists} tp={"trash"} del={deleteForever} res={restore}/>
+              <Notelist view={view} noteList={trashList} setNoteList={updateNoteList} setTargetNote={setTargetNote} mergeLists={mergeLists} tp={"trash"} del={deleteForever} res={restore} />
           } />
           {
             allTagList.map((tag)=>{
@@ -497,8 +695,8 @@ function App() {
                 path='/tags/:tag'
                 element={
                   <>
-                    <Takenote addNewNote={addNewNote} setTargetNote={setTargetNote} curTags={curTags} tagRemover={tagRemover} />
-                    <Notelist view={view} noteList={noteList} setNoteList={updateNoteList} setTargetNote={setTargetNote} mergeLists={mergeLists} tp={"tag"} del={deleteForever} res={restore}/>
+                    <Takenote addNewNote={addNewNote} setTargetNote={setTargetNote} curTags={curTags} tagRemover={tagRemover} noteList={noteList} />
+                    <Notelist view={view} noteList={noteList} setNoteList={updateNoteList} setTargetNote={setTargetNote} mergeLists={mergeLists} tp={"tag"} del={deleteForever} res={restore} getEditNote={getEditNote} />
                   </>
                 } />
               )

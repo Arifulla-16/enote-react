@@ -3,7 +3,7 @@ import Note from './Note'
 import { useLocation } from 'react-router-dom';
 
 function Notelist(props) {
-  var {view,noteList,setNoteList,setTargetNote,mergeLists,tp,del,res} = props;
+  var {view,noteList,setNoteList,setTargetNote,mergeLists,tp,del,res,getEditNote} = props;
   var [title,setTitle] = useState("on");
 
   if(tp!="trash" && tp!="note"){
@@ -66,33 +66,31 @@ function Notelist(props) {
   }
 
   const updatePin = (noteId,bool) => {
-    console.log(noteId,bool);
     var note = noteList.filter((note)=>note.id==noteId)[0];
     note.pinned=bool;
-    console.log(note);
     setNoteList(note,"up");
   }
 
   return (
     <div className="pinnedAndUnpinned" style={{alignItems:`${view==="grid"?"flex-start":"center"}`,marginLeft:`${view==="grid"?"150px":"0px"}`}} onLoad={titleSet}>
       <div>
-        <span className="listSectionTitle">
+        <span className={`${view==="grid"?"":"pinFlexr"} listSectionTitle`}>
           {
-            title=="on"?"Unpinned":""
+            title=="on"?"Others":""
           }
         </span>
         <div className={`noteList ${view==="grid"?"":"listView"}`}>
-          {noteList.length==0?<div class="noNotes">No Notes Available</div>:" "}
+          {noteList.length==0?<div className="noNotes">No Notes Available</div>:" "}
           { noteList.map((note)=>{
               if(!note.pinned){
-                return <Note key={note.id} note={note} tagRemover={tagRemover} noteRemover={noteRemover} checkUpdate={checkUpdate} setTargetNote={setTargetNote} updatePin={updatePin} psy={"p"} noteArchive={noteArchive} imgAdd={imgAdd} tp={tp} del={deleteForever} res={restore} />
+                return <Note view={view} key={note.id} note={note} tagRemover={tagRemover} noteRemover={noteRemover} checkUpdate={checkUpdate} setTargetNote={setTargetNote} updatePin={updatePin} psy={"p"} noteArchive={noteArchive} imgAdd={imgAdd} tp={tp} del={deleteForever} res={restore} getEditNote={getEditNote}/>
               }
             })
           }
         </div>
       </div>
       <div>
-        <span className="listSectionTitle">
+        <span className={`${view==="grid"?"":"pinFlexr"} listSectionTitle `}>
           {
             title=="on"?"Pinned":""
           }
@@ -101,7 +99,7 @@ function Notelist(props) {
           {
             noteList.map((note)=>{
               if(note.pinned){
-                return <Note key={note.id}  note={note} tagRemover={tagRemover} noteRemover={noteRemover} checkUpdate={checkUpdate} setTargetNote={setTargetNote} updatePin={updatePin} psy={"unp"} noteArchive={noteArchive} imgAdd={imgAdd} tp={tp} del={deleteForever} res={restore}/>
+                return <Note view={view} key={note.id}  note={note} tagRemover={tagRemover} noteRemover={noteRemover} checkUpdate={checkUpdate} setTargetNote={setTargetNote} updatePin={updatePin} psy={"unp"} noteArchive={noteArchive} imgAdd={imgAdd} tp={tp} del={deleteForever} res={restore} getEditNote={getEditNote}/>
               }
             })
           }

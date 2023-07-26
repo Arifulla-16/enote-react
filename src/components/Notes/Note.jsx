@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
 function Note(props) {
-    var {note,tagRemover,noteRemover,checkUpdate,setTargetNote,updatePin,psy,noteArchive,imgAdd,tp,del,res} = props;
+    var {view,note,tagRemover,noteRemover,checkUpdate,setTargetNote,updatePin,psy,noteArchive,imgAdd,tp,del,res,getEditNote} = props;
     var {id,title,text,list,checkList,tags,images,bgImage,bgColor,pinned} = note;
 
 
@@ -42,6 +42,10 @@ function Note(props) {
             var cked = e.target.checked;
             checkUpdate(tarId,ck,cked);
         }
+    }
+
+    const handleEdit= (e)=>{
+    //     getEditNote(e.currentTarget.getAttribute("uid"));
     }
 
     const showImg = (e)=>{
@@ -114,7 +118,7 @@ function Note(props) {
 
 
   return (
-    <div className='note' uid={id}>
+    <div className={` note ${view==="grid"?"":"noteResize"}`} uid={id} onClick={handleEdit} >
         <span className="images">
         {
             images.map((img)=>{
@@ -162,10 +166,10 @@ function Note(props) {
             {tp!="trash"&&
                 <span className="noteOptions hider ">
                     <i className="fa-solid fa-palette curs add" onClick={displayPalette} uid={id} ></i>
-                    <label className="custom-file-upload">
-                        <input type="file" id="imgUpload" uid={id} onChange={showImg}/>
-                        <i className="fa-regular fa-image curs add"></i>
-                    </label>
+                    {/* <label className="custom-file-upload">
+                        <input type="file" id="imgUpload" uid={id} />
+                        <i className="fa-regular fa-image curs add" style={{display:"none"}}></i>
+                    </label> */}
                     <i className="fa-solid fa-box-archive curs add" style={{color:`${note.archived==true?'#00000080':"#000000"}`}}  onClick={archiveNote} uid={id}></i>
                     <i className="fa-solid fa-trash curs add" onClick={delNote} uid={id}></i>
                     <i className="fa-solid fa-tags curs add" onClick={showList} uid={id}></i> 

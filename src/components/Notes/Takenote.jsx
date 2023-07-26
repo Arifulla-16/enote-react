@@ -18,9 +18,20 @@ function Takenote(props) {
     var title = e.target.value;
     setTitleVal(title);
   }
+
+  document.addEventListener("custevt",(e)=>{
+    // var note = props.noteList.filter(n=>n.id===e.detail["id"]);
+    // var tnText = document.getElementById("takeNote");
+    // tnText.focus();
+
+    // setNoteVal(note[0]["text"]);
+    // setListVal(note[0]["list"]);
+    // setTitleVal(note[0]["title"]);
+    // setListValCheck(note[0]["checkList"]);
+  });
   
   var arStyle={};
-  if(archive==false){
+  if(archive===false){
     arStyle={color:"#000000"}
   }
   else{
@@ -29,7 +40,7 @@ function Takenote(props) {
 
 
   var style={};
-    if(psy=="p"){
+    if(psy==="p"){
         style={color:"#00000065",textDecoration:"none"}
     }
     else{
@@ -42,11 +53,12 @@ function Takenote(props) {
   }
 
   const pinIt = () =>{
-    psy=="p"?setPsy("unp"):setPsy("p");
+    psy==="p"?setPsy("unp"):setPsy("p");
   }
 
   const addNote = () =>{
-    if(!(titleVal=="" && noteVal=="") && (listVal.length==0)){
+    if(!(titleVal==="" && noteVal==="") && (listVal.length===0)){
+
       var target = document.querySelector(".takeNoteTitle");
       target = target.querySelector(".takeImages");
       target = target.querySelectorAll(".img");
@@ -64,9 +76,11 @@ function Takenote(props) {
         "text":noteVal,
         "tags":[...props.curTags],
         "images":[...igs],
+        "list":listVal,
+        "checkList":[],
         "bgImage":image,
         "bgColor":clr,
-        "pinned":psy=="p"?false:true,
+        "pinned":psy==="p"?false:true,
         "archived":archive
       };
       if(window.location.pathname.includes("/tags")){
@@ -79,7 +93,7 @@ function Takenote(props) {
   }
 
   const addList = () =>{
-    if((noteVal=="")&&(!(titleVal=="" && noteVal==""))){
+    if((noteVal==="")&&(listVal.length!=0)){
       var target = document.querySelector(".takeNoteTitle");
       target = target.querySelector(".takeImages");
       target = target.querySelectorAll(".img");
@@ -95,13 +109,13 @@ function Takenote(props) {
         "id":"1",
         "title":titleVal,
         "text":"",
-        "list":listVal,
-        "checkList":listValCheck,
         "tags":[...props.curTags],
         "images":[...igs],
+        "list":listVal,
+        "checkList":listValCheck,
         "bgImage":image,
         "bgColor":clr,
-        "pinned":psy=="p"?false:true,
+        "pinned":psy==="p"?false:true,
         "archived":archive
       };
       props.addNewNote(note);
@@ -152,6 +166,9 @@ function Takenote(props) {
   }
 
   const listToggle = ()=>{
+    if((noteVal!="")){
+      setNoteVal("");
+    }
     setListFocus("on");
   }
 
@@ -286,11 +303,11 @@ const displayPalette = (e) =>{
         <span className="nonList">
           <span className="icons">
             <i className="fa-solid fa-palette curs add" onClick={displayPalette} ></i>
-            <label className="custom-file-upload">
+            {/* <label className="custom-file-upload">
                     <input type="file" id="imgUpload" onChange={showImg}/>
                     <i className="fa-regular fa-image curs add"></i>
-                </label>
-            <i className="fa-solid fa-box-archive curs add" onClick={()=>{archive==true?setArchive(false):setArchive(true)}} style={arStyle}></i>
+                </label> */}
+            <i className="fa-solid fa-box-archive curs add" onClick={()=>{archive===true?setArchive(false):setArchive(true)}} style={arStyle}></i>
             <i className="fa-solid fa-tags curs add" onClick={showList}></i>
           </span>
           <div className="newList">
