@@ -51,6 +51,7 @@
     margin-left: 11px;
   font-size: 1.6rem;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .search{
@@ -800,6 +801,8 @@ ul{
 input[type=text]{
   background-color: #86818b00;
 }
+
+
 
 
 

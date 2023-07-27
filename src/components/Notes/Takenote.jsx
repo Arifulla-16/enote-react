@@ -70,13 +70,14 @@ function Takenote(props) {
       var image = target.style.backgroundImage;
       target=document.querySelector(".takeNoteOptions");
       var clr= target.style.backgroundColor;
+      var tgs = props.curTags.concat();
       var note = {
         "id":"1",
         "title":titleVal,
         "text":noteVal,
-        "tags":[...props.curTags],
-        "images":[...igs],
-        "list":listVal,
+        "tags":tgs,
+        "images":[...igs].concat(),
+        "list":listVal.concat(),
         "checkList":[],
         "bgImage":image,
         "bgColor":clr,
@@ -105,19 +106,23 @@ function Takenote(props) {
       var image = target.style.backgroundImage;
       target=document.querySelector(".takeNoteOptions");
       var clr= target.style.backgroundColor;
+      var tgs = props.curTags.concat();
       var note = {
         "id":"1",
         "title":titleVal,
         "text":"",
-        "tags":[...props.curTags],
-        "images":[...igs],
-        "list":listVal,
-        "checkList":listValCheck,
+        "tags":tgs,
+        "images":[...igs].concat(),
+        "list":listVal.concat(),
+        "checkList":listValCheck.concat(),
         "bgImage":image,
         "bgColor":clr,
         "pinned":psy==="p"?false:true,
         "archived":archive
       };
+      if(window.location.pathname.includes("/tags")){
+        note.tags.push(window.location.pathname.slice(6));
+      }
       props.addNewNote(note);
       setTitleVal("");
       setListVal([]);
@@ -125,19 +130,19 @@ function Takenote(props) {
     }
   }
 
-  const showImg = (e)=>{
-    var img = document.createElement("img");
-    const [file] = e.target.files;
-    if (file) {
-        img.setAttribute("src",URL.createObjectURL(file));
-        img.setAttribute("alt","image");
-        img.setAttribute("class","img");
-    }
-    var target = document.querySelector(".takeNoteTitle");
-    target = target.querySelector(".takeImages");
-    target.prepend(img);
-    e.target.value=null;
-  }
+  // const showImg = (e)=>{
+  //   var img = document.createElement("img");
+  //   const [file] = e.target.files;
+  //   if (file) {
+  //       img.setAttribute("src",URL.createObjectURL(file));
+  //       img.setAttribute("alt","image");
+  //       img.setAttribute("class","img");
+  //   }
+  //   var target = document.querySelector(".takeNoteTitle");
+  //   target = target.querySelector(".takeImages");
+  //   target.prepend(img);
+  //   e.target.value=null;
+  // }
 
   const focusOut=()=>{
     addNote();

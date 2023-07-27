@@ -90,7 +90,7 @@ function Header(props) {
         </span>
         <span className="appTitle" id="appTitle">
           {
-            !appName.includes("/tags")?(appName.slice(1)==""?"Enote":appName.slice(1).charAt(0).toUpperCase()+appName.slice(1).substring(1)):(appName.slice(6).charAt(0).toUpperCase()+appName.slice(6).substring(1))
+            !appName.includes("/tags")?(appName.slice(1)==""?"Enote":(appName.slice(1).charAt(0).toUpperCase()+appName.slice(1).substring(1)).replace(/%20/g," ")):(appName.slice(6).charAt(0).toUpperCase()+appName.slice(6).substring(1)).replace(/%20/g," ")
           }
         </span>
         <span className="search">

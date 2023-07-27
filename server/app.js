@@ -16,6 +16,7 @@ Mongoose.connect("mongodb+srv://skarfistark:arifulla616@cluster0.ldvegku.mongodb
 
 const noteSchema = new Mongoose.Schema({
         id:String,
+        // user:String,
         title:String,
         text:String,
         list:Array,
@@ -29,12 +30,21 @@ const noteSchema = new Mongoose.Schema({
 });
 
 const tagSchema = new Mongoose.Schema({
+    // user:String,
     tags:Array
+});
+
+const userSchema = new Mongoose.Schema({
+    username:String,
+    password:String,
 });
 
 const Notes = new Mongoose.model("Note",noteSchema);
 const Trash = new Mongoose.model("Trash",noteSchema);
 const Tags = new Mongoose.model("Tag",tagSchema);
+const Users = new Mongoose.model("User",userSchema);
+
+
 
 app.get("/tags",(req,res)=>{
     Tags.find({}).then(list=>{

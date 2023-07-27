@@ -139,7 +139,7 @@ function Note(props) {
                 {text!="" && text}
                 {text=="" && <ul>{
                     list!=[] && list.map((item,idx)=>{
-                        return (<div key={item} className="noteCheckList">
+                        return (<div key={item+idx} className="noteCheckList">
                                     <input type="checkbox" name="checker" idx={idx} uid={id} checked={checkList[idx]} onChange={handleCheck} className="listChecker"/>
                                     <li>{item}</li>
 

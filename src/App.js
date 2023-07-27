@@ -7,7 +7,6 @@ import Api from './components/Api';
 import Notelist from './components/Notes/Notelist';
 import Takenote from './components/Notes/Takenote';
 import { v4 as uuidv4 } from 'uuid';
-import axios from 'axios';
 
 function App() {
   var [noteList,setNoteList] = useState([]);
@@ -371,7 +370,9 @@ useEffect(() => {
     note.id=uuidv4();
     var upList = noteList.slice();
     upList.push(note);
-    Api.post("/notes",note,{headers: {'Content-Type': 'application/json; charset=UTF-8',"Access-Control-Allow-Origin": "*"}}).then(setNoteList(upList));
+    Api.post("/notes",note,{headers: {'Content-Type': 'application/json; charset=UTF-8',"Access-Control-Allow-Origin": "*"}}).then(()=>{
+      setNoteList(upList)
+    });
   }
 
   const getEditNote = (id)=>{

@@ -13,7 +13,9 @@ function NavItem(props) {
         </span>
         </span>
         <span className={`navTag ${styl===1?"hideTag":""}`}>
-        {tag}
+        {
+          tag.length>12?tag.substring(0,12)+"...":tag
+        }
         </span>
     </div>
   )
